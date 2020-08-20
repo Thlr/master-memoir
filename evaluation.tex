@@ -173,26 +173,6 @@ some other value, then we study what effects these parameters have in respect
 to one another, and finally we conduct scalability experiments to test
 Batkube's stability and performances on large workloads.
 
-\section{Deviation of the simulation with reality}
-
-TODO: With default parameters (timeout TBD with experiments results, max time step same, min delay 0), compare simulated and emulated results. 
-
-Here : the Gantt charts from evalys.
-
-Study on two metrics : makespan and mean\_waiting\_time. Show the box plots for
-simulated and emulated metrics.
-
-Discussion:
-
-Container pull and startup time not accounted for in the simulation.
-
-The scheduler over allocates when it should not, reducing makespan.
-
-The scheduler sometimes does not seem to get update on nodes resource state and
-realizes late that some nodes are free (is this still the case? need to plot
-gantt charts)
-
-TODO: mention over allocation of resources
 
 \subsection{Minimum delay}
 
@@ -280,7 +260,6 @@ to estimate the accuracy of the simulation. The other parameters are set to:
 		\caption{Timeout value: 50ms}
 		\label{fig:timeout_50ms}
 	\end{subfigure}
-
 	\caption{A low timeout value results in the apparition of delays in the scheduling process. Both gantt charts were made with the \textit{spaced} workload.}
 	\label{fig:timeout_gaps}
 \end{figure}
@@ -432,3 +411,74 @@ decisions on jobs that are already scheduled.
 %makespan and mean waiting time: \[\frac{1}{\sqrt{(makespan_{sim} -
 %	makespan_{emu})^2 + (waitingtime_{sim} - waitingtime_{emu})^2}}\]
 %
+
+\section{Deviation of the simulation with reality}
+
+Thanks to our emulated cluster we were able to run those same workloads on real
+clusters that presented the same characteristics as the platforms we used to
+run our simulations. The \textit{burst} and \textit{spaced} workloads were run
+on 16 nodes each having one allocatable cpu, and the \textit{realistic}
+workload was run on a single node composed of 6 allocatable cpus. The simulated
+workloads were run with the following parameters : \texttt{min-delay=0ms},
+\texttt{timeout-value=50ms}, \texttt{max-simulation-timestep=1000s}. Each
+emulated workload was run 10 times (except for the realistic workload which was
+only run once) and simulated workloads were run 20 times each. Here are the
+deviations we observed between the simulation and the emulation.
+
+As we saw earlier the scheduler makes errors in the simulations by allocating
+pods on nodes that are already full. Also, the model is incomplete and the
+simulator does not account for the time Kubernetes takes to pull the containers
+from the Internet. For these reasons we except simulated makespan and mean
+waiting time to be lower than the emulated ones.
+
+\begin{table}
+	\centering
+	\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+		\hline
+
+		\multirow{4}{*}{} & \multicolumn{5}{c|}{\textbf{makespan}} & \multicolumn{5}{c|}{\textbf{mean waiting time}}\\
+
+		\cline{2-11}
+
+		& \multicolumn{2}{c|}{simulated} &
+		\multicolumn{2}{c|}{emulated}& \multirow{2}{*}{mean difference}
+		& \multicolumn{2}{c|}{simulated} &
+		\multicolumn{2}{c|}{emulated} & \multirow{2}{*}{mean
+		difference} \\
+
+		\cline{2-5}\cline{7-10}
+
+		& $\mu$ & $\sigma$ & $\mu$ & $\sigma$ & & $\mu$ & $\sigma$ & $\mu$ & $\sigma$ & \\
+		
+		\hline
+
+		burst & 2215 & 0.508 & 2467 & 28.3 & 252 & 970 & 12.6 & 1077 & 10.6 & 107\\
+		spaced & 2257 & 16.9 & 2468 & 5.14 & 211 & 48.1 & 9.44 & 146 & 1.67 & 97.9 \\
+		realistic & 32555 & 1.30 & 32556 & - & 1 & 2020 & 950 & 2884 & - & 864\\
+		\hline
+	\end{tabular}
+	\caption{Difference between emulated and simulated values. All values are in seconds.}
+	\label{tab:deviation}
+\end{table}
+
+We observe a neat difference between simulated and emulated makespans for the
+burst and spaced workloads as expected: both times, the simulation finishes
+earlier than the emulation. The mean waiting times of the burst workload seem
+to follow this same principle as the simulated values are slightly lower than
+emulated ones, although it doesn't seem to be the case for the spaced workload.
+Indeed, the scheduler performed drastically better in the simulated scenario.
+We don't know the cause of this. As for the realistic workload, the simulated
+metrics correspond exactly to the ones measured in the emulated cluster. At
+first glance it seems that the waiting times do not correspond, however we
+noticed during our experiments that the scheduler seemed to follow to scenarios
+for this workload leading to two different values of the mean waiting time.
+This is especially obvious on figure \ref{fig:timestep_real} where we notice
+two groups on the far left graph. Considering this, we can make the assumption
+that those waiting time values are either $\mu + \sigma$ or $\mu - \sigma$,
+that is to say, in this case, 2970 or 1070. We can then consider 2970 and 2884
+to be part of the same group since they are fairly close to each other and
+assume that the simulation was accurate.
+
+\subsection{Discussion}
+
+TODO

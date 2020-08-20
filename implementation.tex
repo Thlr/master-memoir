@@ -259,7 +259,7 @@ simulations, the scheduler needs to be synchronized with simulation time. We
 then need to intercept all calls to machine time to redirect them to the
 simulator. There are two approaches to this: either we patch the C library used
 by Go (figure \ref{fig:patch-C}) and compile Go using our library, or we patch
-Go's time library (\ref{fig:patch-go}) and then patch the scheduler so it uses
+Go's time library (\ref{fig:patch-time}) and then patch the scheduler so it uses
 our library instead of the official one.
 
 Using this tool we patched the
