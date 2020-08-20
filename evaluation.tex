@@ -85,6 +85,8 @@ just do not wish to add this other layer of complexity to our experiments.
 	\item A \textit{realistic} workload, which is a trace extracted from the  Karlsruhe Institue of Technology ForHLR II System.
 \end{itemize}
 
+TODO: realistic workload stats.
+
 The first two workloads are straight forward and could be generated with the
 use of a plain text editor (understand \texttt{vim} and its macros). The third
 workload required more processing to be obtained.  
@@ -145,8 +147,6 @@ making the scheduling operations trivial.
 
 \section{Study of the simulator parameters} \label{sec:params-eval}
 
-Disclaimer: WIP\\
-
 The simulator has a few parameters that impact the simulation speed and
 accuracy. The objective is to study the effects of these parameters on the
 simulation to better understand the scheduler behavior when running in
@@ -154,7 +154,10 @@ coordination with Batkube.\\
 
 The objective here is to fine tune the parameters in order to find a compromise
 between accuracy and scalability. We want to know which combination lead us to
-the most stable results, while keeping simulation time as low as possible.
+the most stable results, while keeping simulation time as low as possible. In
+these simulations, the scheduling time is very low and was neglected.  This
+would not be the case with more complicated workloads involving complex
+scheduling mechanisms.
 
 The parameters are:
 \begin{itemize}
@@ -169,6 +172,27 @@ We first study these parameters one by one by fixing the other parameters to
 some other value, then we study what effects these parameters have in respect
 to one another, and finally we conduct scalability experiments to test
 Batkube's stability and performances on large workloads.
+
+\section{Deviation of the simulation with reality}
+
+TODO: With default parameters (timeout TBD with experiments results, max time step same, min delay 0), compare simulated and emulated results. 
+
+Here : the Gantt charts from evalys.
+
+Study on two metrics : makespan and mean\_waiting\_time. Show the box plots for
+simulated and emulated metrics.
+
+Discussion:
+
+Container pull and startup time not accounted for in the simulation.
+
+The scheduler over allocates when it should not, reducing makespan.
+
+The scheduler sometimes does not seem to get update on nodes resource state and
+realizes late that some nodes are free (is this still the case? need to plot
+gantt charts)
+
+TODO: mention over allocation of resources
 
 \subsection{Minimum delay}
 
@@ -224,18 +248,42 @@ simulation: for example, if the scheduler needs 30ms to make a decision upon
 reception of a message, and the value of the timeout is 20ms, Batkube will
 receive the decision on the next cycle which may happen several dozens of
 seconds later (depending on the \textit{maximum simulation time step} value).
-On the other hand, a \textit{timeout value} too large will induce longer
-simulation times. Indeed, once the simulator was given enough
-time to process a message, any time following is spent idling. We want to
-measure which \texttt{timeout value} is just enough for the scheduler to be
-able to make a response without spending any time idling.
+This phenomenon appears very clearly in figure \ref{fig:timeout_gaps} which
+represents a simulation run on the spaced workload (other parameters are
+\texttt{min-delay=0} and \texttt{max-simulation-timestep=1000s} to reduce
+simulation time). Additionally, this graph shows us that low timeout values
+induce incorrect behavior from the scheduler such as over allocation of
+resources.  On the other hand, a \textit{timeout value} too large will induce
+longer simulation times. Indeed, once the simulator was given enough time to
+process a message, any time following is spent idling. We want to measure which
+\texttt{timeout value} is just enough for the scheduler to be able to make a
+response without spending any time idling.
 
 We run each workload with a \texttt{timeout value} ranging from 0ms to 100ms,
-with a step of 1ms. Each time we measure the duration of the simulation as well
-as the makespan and the mean waiting time. The latter two will enable us to
-compare the results against the emulated results in order to estimate the
-accuracy of the simulation. The other parameters are set to:
+--except for the realistic workload because simulation times were already
+consequent from 50ms -- with a step of 1ms. Each time we measure the duration
+of the simulation as well as the makespan and the mean waiting time. The latter
+two will enable us to compare the results against the emulated results in order
+to estimate the accuracy of the simulation. The other parameters are set to:
 \texttt{min-delay=0ms}, \texttt{max-simulation-timestep=20s}
+
+\begin{figure}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{imgs/timeout_5ms_gantt.png}
+		\caption{Timeout value: 5ms}
+		\label{fig:timeout_5ms}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{imgs/timeout_50ms_gantt.png}
+		\caption{Timeout value: 50ms}
+		\label{fig:timeout_50ms}
+	\end{subfigure}
+
+	\caption{A low timeout value results in the apparition of delays in the scheduling process. Both gantt charts were made with the \textit{spaced} workload.}
+	\label{fig:timeout_gaps}
+\end{figure}
 
 \begin{figure}
 	\begin{subfigure}{\textwidth}
@@ -256,30 +304,27 @@ accuracy of the simulation. The other parameters are set to:
 	\label{fig:timeout}
 \end{figure}
 
-TODO: redo the simulations for the realistic wl, removing some values of
-timeout and adding repetition to show aggregated metrics. (non aggregated ones
-are too dispersed)
-
-TODO: \ref{fig:timeout_duration} does not have the same scale on the x axis as the others.
-
-TODO: Gantt charts to show the gaps.
-
 As we expected, a \textit{timeout value} too low results in the scheduler
 missing a few cycles each time it wants to communicate a decision making, thus
 increasing the makespan and mean waiting time.  As the \textit{timeout}
 increases, it reaches a point where the scheduler consistently sends decisions
 in the same cycle as the one where it has received the message that triggered
-the decision making. After this point though the curves keep decreasing,
-showing that the gaps keep receding afterwards. However, the gain in accuracy
-is shallow and considering that there is, again, a direct correlation between
-the \textit{timeout value} and the simulation time, it is desirable to keep
-this value at the limit where the results start to stabilize.  In this case,
-according to figure \ref{fig:timeout}, \texttt{timeout-value=50ms}
-seems like a decent compromise between accuracy and scalability.
+the decision making. After this point though the curves keep decreasing ever so
+slightly, showing that the gaps keep receding afterwards. However, the gain in
+accuracy is shallow and considering that there is, again, a direct correlation
+between the \textit{timeout value} and the simulation time, it is desirable to
+keep this value at the limit where the results start to stabilize.  In this
+case, according to figure \ref{fig:timeout}, \texttt{timeout-value=50ms} seems
+like a decent compromise between accuracy and scalability.
 
-With such simple workloads and platforms, the decision making time is very low
-(it is but a matter of milliseconds), but we can imagine it may reach much
-higher values given a bigger platform and more complicated workload.
+We observe slightly different behaviors with the realistic workload. First, the
+results stabilize earlier than the other workloads as we can see on the first
+graph of figure \ref{fig:timeout_real}. Also, the mean waiting time and
+simulation time values are much more scattered than the other two workloads: it
+seems like two curves appear on the last two graphs. Since the simulation is
+not deterministic, and that the number of jobs in the realistic workload is
+fairly low, a slight difference in scheduling decisions has a notable impact on
+the simulation. 
 
 \subsection{Maximum simulation time step}
 
@@ -315,61 +360,75 @@ values of the maximum timestep (compared to the previous 100ms).
 	\caption{Effect of the maximum simulation timestep on the simulation}
 	\label{fig:timestep}
 \end{figure}
+
+
 As expected, the simulation time decreases drastically when the maximum
 timestep increases. Still, this value reaches a minimum eventhough the maximum
 timestep keeps increasing. This happens because Batsim events are only so far
 appart in the simulation, and Batsim will always wake up before the maximum
 timestep is reached.
 
-TODO: redo the experiment for the spaced wl and redo the graph for makespan (do
-not put all three wl on the same graph because the scale is so different).
+Surprisingly, we observe that the increase in the maximum simulation timestep
+has no noticeable effect on the other metrics for the burst and realistic
+workloads. The makespan and mean waiting time flatten out regardless of the
+increase in the timestep for the burst workload on figure
+\ref{fig:timestep_burst_sp}. Regarding the realistic workload, we still observe
+on figure \ref{fig:timestep_real} the different trajectories we noticed in the
+last experiment, however the distribution does not change according to the
+maximum timestep either.
 
-\subsection{Parameters inter dependency}
+\begin{figure}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{imgs/max-timestep_30ms_gantt.png}
+		\caption{Maximum simulation timestep value: 30ms}
+		\label{fig:timestep_5ms}
+	\end{subfigure}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{imgs/max-timestep_1000s_gantt.png}
+		\caption{Maximum simulation timestep value: 1000s}
+		\label{fig:timesteap_50ms}
+	\end{subfigure}
 
-Studying the parameters independently is not enough, we need to study their
-impact relatively to each others.
+	\caption{}
+	\label{fig:timestep_overlap}
+\end{figure}
 
-For instance, the \textit{maximum simulation time step} and the
-\textit{timeout} value are tightly linked together regarding their effect on
-accuracy. Both decreasing \textit{timeout} and increasing \textit{maximum
-simulation time step} will increase the amount of delays in the decision making
-of the scheduler, but also their length, multiplying the impact on accuracy.
+The spaced workload however is impacted by the increase in the timestep.
+Plotting a Gantt chart at different values of the simulation timestep allow us
+to visualize why this happens, and it appears that lower values of the maximum
+timestep induce more errors in the simulation. We believe that this is caused
+by the drastic increase in the number of exchanges with the scheduler, which in
+turn increases the likelihood of generating errors in the scheduler. We
+conclude that having a low maximum timestep is never desirable, as it increases
+both simulation time and scheduler errors. Furthermore, a timestep value as
+high as 1000s in this case corresponds to no limits on Batsim jumps in time so
+one could argue that this parameter can simply be discarded. While it is the
+case here with these simple workloads and the absence of jobs preemption, it
+might have an impact when the scheduler is susceptible to make scheduling
+decisions on jobs that are already scheduled.
 
-On the other hand, we do not except the \textit{minimum wait delay} to have any
-impact other than increasing the simulation stability.
-
-PROTOCOL: We know the simulations are statistically the same by now, and we're
-confident enough to run only one simulation per point. Timeout value ranges
-from 5ms to 50ms, max timestep ranges from 1s to 100s (logarithmic again).
-
-TODO: Facet graphs: timestep vs timeout vs accuracy vs simulation time. We can
-define accuracy as one on the euclidean distance between emulated and simulated
-makespan and mean waiting time: \[\frac{1}{\sqrt{(makespan_{sim} -
-	makespan_{emu})^2 + (waitingtime_{sim} - waitingtime_{emu})^2}}\]
-
-\section{Deviation of the simulation with reality}
-
-TODO: With default parameters (timeout TBD with experiments results, max time step same, min delay 0), compare simulated and emulated results. 
-
-Here : the Gantt charts from evalys.
-
-Study on two metrics : makespan and mean\_waiting\_time. Show the box plots for
-simulated and emulated metrics.
-
-Discussion:
-
-Container pull and startup time not accounted for in the simulation.
-
-The scheduler over allocates when it should not, reducing makespan.
-
-The scheduler sometimes does not seem to get update on nodes resource state and
-realizes late that some nodes are free (is this still the case? need to plot
-gantt charts)
-
-\section{Scalability}
-
-Batkube is by no means scalable in comparison of existing batch schedulers
-(TODO: ref to some papers to prove this point). At its current state, it exists
-to prove adapting Kubernetes schedulers is possible, leaving optimization for
-future works. Also, Kubernetes is not optimized for batch scheduling and usage
-in the HPC field is still in its early states.
+%\subsection{Parameters inter dependency}
+%
+%Studying the parameters independently is not enough, we need to study their
+%impact relatively to each others.
+%
+%For instance, the \textit{maximum simulation time step} and the
+%\textit{timeout} value are tightly linked together regarding their effect on
+%accuracy. Both decreasing \textit{timeout} and increasing \textit{maximum
+%simulation time step} will increase the amount of delays in the decision making
+%of the scheduler, but also their length, multiplying the impact on accuracy.
+%
+%On the other hand, we do not except the \textit{minimum wait delay} to have any
+%impact other than increasing the simulation stability.
+%
+%PROTOCOL: We know the simulations are statistically the same by now, and we're
+%confident enough to run only one simulation per point. Timeout value ranges
+%from 5ms to 50ms, max timestep ranges from 1s to 100s (logarithmic again).
+%
+%TODO: Facet graphs: timestep vs timeout vs accuracy vs simulation time. We can
+%define accuracy as one on the euclidean distance between emulated and simulated
+%makespan and mean waiting time: \[\frac{1}{\sqrt{(makespan_{sim} -
+%	makespan_{emu})^2 + (waitingtime_{sim} - waitingtime_{emu})^2}}\]
+%

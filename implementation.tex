@@ -262,6 +262,13 @@ by Go (figure \ref{fig:patch-C}) and compile Go using our library, or we patch
 Go's time library (\ref{fig:patch-go}) and then patch the scheduler so it uses
 our library instead of the official one.
 
+Using this tool we patched the
+kube-scheduler\footnote{https://github.com/kubernetes/kube-scheduler}, that we
+used during our experiments, and also the
+kube-batch\footnote{https://github.com/kubernetes-sigs/kube-batch} scheduler.
+The latterreceived the patch without any issues, but we couldn't use it because
+it implied more development on the batkube api to support it.
+
 \begin{figure}[]
 	\centering
 	\includegraphics[scale=0.75]{imgs/time-hijack-Go.png}
