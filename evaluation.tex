@@ -188,14 +188,14 @@ accuracy do not concern us here.\\
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.45\textwidth]{imgs/min-delay_spaced_200_delay170_crash_old.png}
+	\includegraphics[width=0.5\textwidth]{imgs/min-delay_crash_old.png}
 	\caption{Crash rate of the simulations against minimum delay.}
 	\label{fig:min-delay_crash}
 \end{figure}
 
 \begin{figure}
 	\centering
-	\includegraphics[width=\textwidth]{imgs/min-delay_duration.png}
+	\includegraphics[width=0.9\textwidth]{imgs/min-delay_duration.png}
 	\caption{Mean duration of the simulations (in case of success) against minimum delay. Error bars show confidence intervals at 95\%.}
 	\label{fig:min-delay_duration}
 \end{figure}
@@ -215,7 +215,6 @@ scheduler do not result in a decision making. After this value, we notice a
 direct correlation between \textit{minimum delay} increase and simulation time
 increase. It follows that the best choice for the \textit{minimum delay} now is
 zero, and we will use this value for the rest of the experiments.
-
 
 \subsection{Timeout}
 
@@ -239,27 +238,21 @@ accuracy of the simulation. The other parameters are set to:
 \texttt{min-delay=0ms}, \texttt{max-simulation-timestep=20s}
 
 \begin{figure}
-	\begin{subfigure}{.5\textwidth}
+	\begin{subfigure}{\textwidth}
 		\centering
-		\includegraphics[width=\linewidth]{imgs/timeout_duration.png}
+		\includegraphics[width=\textwidth]{imgs/timeout_burst_spaced.png}
 		\caption{}
-		\label{fig:timeout_duration}
-	\end{subfigure}
-	\begin{subfigure}{.5\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{imgs/timeout_makespan.png}
-		\caption{}
-		\label{fig:timeout_makespan}
+		\label{fig:timeout_burst_sp}
 	\end{subfigure}
 
-	\centering
-	\begin{subfigure}{.5\textwidth}
+	\begin{subfigure}{\textwidth}
 		\centering
-		\includegraphics[width=\linewidth]{imgs/timeout_mwt.png}
+		\includegraphics[width=\textwidth]{imgs/timeout_realistic.png}
 		\caption{}
-		\label{fig:timeout_mwt}
+		\label{fig:timeout_real}
 	\end{subfigure}
-	\caption{Effect of the timeout value on the simulation}
+
+	\caption{Effect of the timeout value on the simulation.}
 	\label{fig:timeout}
 \end{figure}
 
@@ -281,7 +274,7 @@ showing that the gaps keep receding afterwards. However, the gain in accuracy
 is shallow and considering that there is, again, a direct correlation between
 the \textit{timeout value} and the simulation time, it is desirable to keep
 this value at the limit where the results start to stabilize.  In this case,
-according to figure \ref{fig:timeout_makespan}, \texttt{timeout-value=50ms}
+according to figure \ref{fig:timeout}, \texttt{timeout-value=50ms}
 seems like a decent compromise between accuracy and scalability.
 
 With such simple workloads and platforms, the decision making time is very low
@@ -304,20 +297,24 @@ following a logarithmic scale. The other parameters are fixed to
 \texttt{base-simulation-timestep} was lowered to 10ms in order to test lower
 values of the maximum timestep (compared to the previous 100ms).
 
-\begin{figure}[]
-	\centering
-	\includegraphics[scale=0.5]{imgs/max-timestep_duration.png}
-	\caption{Effect of maximum timestep on simulation time}
-	\label{fig:max_timestep_duration}
-\end{figure}
+\begin{figure}
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{imgs/max-timestep_burst_sp.png}
+		\caption{}
+		\label{fig:timestep_burst_sp}
+	\end{subfigure}
 
-\begin{figure}[]
-	\centering
-	\includegraphics[scale=0.5]{imgs/max-timestep_mwt.png}
-	\caption{Effect of maximum timestep on mean waiting time}
-	\label{fig:max_timestep_mwt}
-\end{figure}
+	\begin{subfigure}{\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{imgs/max-timestep_realistic.png}
+		\caption{}
+		\label{fig:timestep_real}
+	\end{subfigure}
 
+	\caption{Effect of the maximum simulation timestep on the simulation}
+	\label{fig:timestep}
+\end{figure}
 As expected, the simulation time decreases drastically when the maximum
 timestep increases. Still, this value reaches a minimum eventhough the maximum
 timestep keeps increasing. This happens because Batsim events are only so far
