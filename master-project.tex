@@ -5,6 +5,8 @@
 %%\usepackage[latin1]{inputenc}
 \usepackage[french,english]{babel}
 
+\usepackage{easyReview}
+
 % personal packages
 \usepackage [includehead, margin=1.5cm]{geometry}                % See geometry.pdf to learn the layout options. There are lots.
 \usepackage{graphicx} % include images
@@ -139,31 +141,29 @@ Jury member 2\\
 	TODO : rework this with the new intro.
 
 	The rise of containerized applications has provided web platforms with
-	much more control over their resources than they had before with their
-	physical servers. Soon enough, developers realized they could go even
-	further by automating container management operations to allow for even
-	more scalability. The Cloud Native Computing Foundation was founded in
-	this context, and developed Kubernetes which is a piece of software
-	capable of container orchestration, or in other words, container
-	management. Now, as we observe a convergence between HPC (High
-	Performance Computing) and the Big Data field where Kubernetes is
-	already the standard for some applications such as Machine Learning,
-	discussions about leveraging containers for HPC applications rose and
-	interest in Kubernetes has grown in the HPC community. One of the many
+	much more control over resources than physical servers.
+        Eventually, developers realized they could go even
+	further by automating container management operations to allow push even
+	scalability even further. The Cloud Native Computing Foundation was founded in
+	this context, and we witnessed the development of Kubernetes: a piece of software
+	capable of container orchestration, also refered earlier as container
+	management. We currently observe a convergence of HPC (High
+	Performance Computing) and Big Data at least research wise. Kubernetes as an
+	already established standard for common applications such as Machine Learning,
+        ``cite at least 2 more here : map reduce?, ...''
+	leaves space for the discussion about leveraging containers in the HPC community. One of the many
 	challenges the HPC world has to face is scheduling, which is the act of
 	allocating tasks submitted by users on available resources. In order to
-	properly evaluate and develop schedulers researchers have used
-	simulators for decades to avoid running experiments in real conditions,
-	which is costly both in time and resources. However, such simulators do
-	not exist for Kubernetes or are not open to the public. While the
-	default scheduler works great for most of the Cloud Native
-	infrastructures Kubernetes was designed for, some teams of researchers
-	would rather be able to experiment with different batch processing
+	properly evaluate and develop schedulers, researchers have used
+	simulators to fast and accuretly model complex networks and computing infrastructures.
+        However, the scientific communicty alck of a open source Kubernetes simulator. While the
+	default scheduler works for most of the Cloud Native
+	infrastructures HPC researches would rather experiment with different batch processing
 	policies on Kubernetes as they do with traditional HPC. Our goal in
-	this master thesis is to describe how we developed Batkube, which it is
+	this master thesis is to describe Batkube, which is
 	an interface between Kubernetes schedulers and Batsim, a general
 	purpose infrastructure simulator based on the Simgrid framework and
-	developed at the LIG.
+	developed by LIG ??? Simgrid is developed by many other people (Adrien Lebre: Bordeaux, Martin Quinson: Rennes, etc...).
 
 \end{abstract}
 \abstractintoc
