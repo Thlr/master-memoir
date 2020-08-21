@@ -2,10 +2,10 @@
 
 % Essential packages
 \usepackage[T1]{fontenc}
-%%\usepackage[latin1]{inputenc}
+%\usepackage[latin1]{inputenc}
 \usepackage[french,english]{babel}
 
-\usepackage{easyReview}
+% \usepackage{easyReview}
 
 % personal packages
 \usepackage [includehead, margin=1.5cm]{geometry}                % See geometry.pdf to learn the layout options. There are lots.
@@ -115,9 +115,9 @@ Specialization \optionB  \end{center}\vfill}
 Under the supervision of:\\
 Michael Mercier\\\medskip
 Defended before a jury composed of:\\
-Head of the jury\\
-Jury member 1\\
-Jury member 2\\
+Céline Coutrix\\
+Olivier Richard\\
+Vania Marangozova-Martin\\
 }
 \session{September \hfill 2020}
 \setcounter{tocdepth}{2}
@@ -136,35 +136,40 @@ Jury member 2\\
 \renewcommand{\abstracttextfont}{\normalfont}
 \abstractintoc
 \begin{abstract} 
-	Outdated.
-
-	TODO : rework this with the new intro.
-
-	The rise of containerized applications has provided web platforms with
-	much more control over resources than physical servers.
-        Eventually, developers realized they could go even
-	further by automating container management operations to allow push even
-	scalability even further. The Cloud Native Computing Foundation was founded in
-	this context, and we witnessed the development of Kubernetes: a piece of software
-	capable of container orchestration, also refered earlier as container
-	management. We currently observe a convergence of HPC (High
-	Performance Computing) and Big Data at least research wise. Kubernetes as an
-	already established standard for common applications such as Machine Learning,
-        ``cite at least 2 more here : map reduce?, ...''
-	leaves space for the discussion about leveraging containers in the HPC community. One of the many
-	challenges the HPC world has to face is scheduling, which is the act of
-	allocating tasks submitted by users on available resources. In order to
-	properly evaluate and develop schedulers, researchers have used
-	simulators to fast and accuretly model complex networks and computing infrastructures.
-        However, the scientific communicty alck of a open source Kubernetes simulator. While the
-	default scheduler works for most of the Cloud Native
-	infrastructures HPC researches would rather experiment with different batch processing
-	policies on Kubernetes as they do with traditional HPC. Our goal in
-	this master thesis is to describe Batkube, which is
-	an interface between Kubernetes schedulers and Batsim, a general
-	purpose infrastructure simulator based on the Simgrid framework and
-	developed by LIG ??? Simgrid is developed by many other people (Adrien Lebre: Bordeaux, Martin Quinson: Rennes, etc...).
-
+	The use of containerized applications in web platforms has given
+	developers much more control over their resources than they had before,
+	when there was no intermediate between the application and the physical
+	servers. Services are now encapsulated in their own environments, and
+	can be shipped on any machine without further development. Eventually,
+	developers realized they could go even further by automating containers
+	management operations. In this context we witnessed the rise of
+	container orchestration software which gave institutions an
+	unprecedented ease of administration over their services. Kubernetes is
+	one such software and arguably the most popular container orchestrator
+	amongst web platforms. It has also become a standard in the Deep
+	Learning community as it is providing the building blocks for
+	constructing the emerging field of MLOps, which is the application of
+	DevOps concepts to the Machine Learning domain. However, while
+	Kubernetes is now a standard solution for any institution who wishes to
+	leverage container technology for its infrastructures, many fundamental
+	questions remain. One such issue is the problem of scheduling, which in
+	computer science is the action of allocating tasks submitted by users
+	on available resources.  In order to properly evaluate and develop
+	schedulers, or more broadly \textit{Resource and Jobs Management
+	Systems (RJMS)}, researchers have used simulators to model complex
+	networks and computing infrastructures accurately in a short amount of
+	time. Indeed, the cost of running experiments on real systems will
+	never be justified by the improvements these experiments would enable.
+	While the default Kubernetes scheduler works well for most of the
+	\textit{Cloud Native} infrastructures, \textit{High Performance
+	Computing (HPC)} researchers would rather experiment with different
+	batch processing policies on Kubernetes cluster as they do with
+	traditional HPC. Our goal in this master thesis is to describe Batkube,
+	which is an interface between Kubernetes schedulers and Batsim, a
+	general purpose infrastructure simulator focused on the study of RJMS.
+	Batsim itself is based on the sound and scalable models of SimGrid
+	which is a popular framework for building distributed system
+	simulators.
 \end{abstract}
 \abstractintoc
 
