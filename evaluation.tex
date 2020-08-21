@@ -2,14 +2,15 @@
 
 Because SimGrid has already been thoroughly tested and validated, we do not
 need to run extensive experiments to validate Batkube simulation models.
-Moreover, since we only consider simple delay jobs, validation is not really
-necessary. Still, even though the underlying models are sound, Batkube adds a
-considerable overhead to Batsim because of the time synchronization between the
-simulator and the scheduler. We want to verify to what extent time manipulation
-impacts the scheduler behavior, and also that Batkube's fake Kubernetes API
-mimics the real API well enough to let the scheduler run as expected. We then
-conducted some validation experiments with simple workloads to verify that the
-scheduler was correctly making its decisions.
+Moreover, since we only consider simple workloads containing only delay jobs,
+whose resource requests are only cpu, a simple look at the gantt charts allow
+us to evaluate the quality of the scheduling. Still, even though the underlying
+models are sound, Batkube adds a considerable overhead to Batsim because of the
+time synchronization between the simulator and the scheduler. We want to verify
+to what extent time manipulation impacts the scheduler behavior, and also that
+Batkube's fake Kubernetes API mimics the real API well enough to let the
+scheduler run as expected. The validation experiments we conducted aim to
+verifying that the scheduler works as intended.
 
 In the next sections, we present the workloads and platforms we chose to study,
 how we conducted experiments on a real cluster, and a study on Batkube's
@@ -173,7 +174,6 @@ some other value, then we study what effects these parameters have in respect
 to one another, and finally we conduct scalability experiments to test
 Batkube's stability and performances on large workloads.
 
-
 \subsection{Minimum delay}
 
 Earlier in the development of batkube we noticed that not leaving enough time
@@ -233,11 +233,13 @@ represents a simulation run on the spaced workload (other parameters are
 \texttt{min-delay=0} and \texttt{max-simulation-timestep=1000s} to reduce
 simulation time). Additionally, this graph shows us that low timeout values
 induce incorrect behavior from the scheduler such as over allocation of
-resources.  On the other hand, a \textit{timeout value} too large will induce
-longer simulation times. Indeed, once the simulator was given enough time to
-process a message, any time following is spent idling. We want to measure which
-\texttt{timeout value} is just enough for the scheduler to be able to make a
-response without spending any time idling.
+resources: darker areas show jobs overlapping on the same resource, even though
+all resource have a capacity of one cpu and jobs request one full cpu.  On the
+other hand, a \textit{timeout value} too large will induce longer simulation
+times. Indeed, once the simulator was given enough time to process a message,
+any time following is spent idling. We want to measure which \texttt{timeout
+value} is just enough for the scheduler to be able to make a response without
+spending any time idling.
 
 We run each workload with a \texttt{timeout value} ranging from 0ms to 100ms,
 --except for the realistic workload because simulation times were already
@@ -340,7 +342,6 @@ values of the maximum timestep (compared to the previous 100ms).
 	\label{fig:timestep}
 \end{figure}
 
-
 As expected, the simulation time decreases drastically when the maximum
 timestep increases. Still, this value reaches a minimum eventhough the maximum
 timestep keeps increasing. This happens because Batsim events are only so far
@@ -433,28 +434,26 @@ waiting time to be lower than the emulated ones.
 
 \begin{table}
 	\centering
-	\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+	\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
 		\hline
 
-		\multirow{4}{*}{} & \multicolumn{5}{c|}{\textbf{makespan}} & \multicolumn{5}{c|}{\textbf{mean waiting time}}\\
+		\multirow{3}{*}{} & \multicolumn{4}{c|}{\textbf{makespan}} & \multicolumn{4}{c|}{\textbf{mean waiting time}}\\
 
-		\cline{2-11}
+		\cline{2-9}
 
-		& \multicolumn{2}{c|}{simulated} &
-		\multicolumn{2}{c|}{emulated}& \multirow{2}{*}{mean difference}
-		& \multicolumn{2}{c|}{simulated} &
-		\multicolumn{2}{c|}{emulated} & \multirow{2}{*}{mean
-		difference} \\
+		& \multicolumn{2}{c|}{emulated} &
+		\multicolumn{2}{c|}{simulated} & \multicolumn{2}{c|}{emulated}
+		& \multicolumn{2}{c|}{simulated} \\
 
-		\cline{2-5}\cline{7-10}
+		\cline{2-9}
 
-		& $\mu$ & $\sigma$ & $\mu$ & $\sigma$ & & $\mu$ & $\sigma$ & $\mu$ & $\sigma$ & \\
+		& $\mu$ & $\sigma$ & $\mu$ & $\sigma$ & $\mu$ & $\sigma$ & $\mu$ & $\sigma$ \\
 		
 		\hline
 
-		burst & 2215 & 0.508 & 2467 & 28.3 & 252 & 970 & 12.6 & 1077 & 10.6 & 107\\
-		spaced & 2257 & 16.9 & 2468 & 5.14 & 211 & 48.1 & 9.44 & 146 & 1.67 & 97.9 \\
-		realistic & 32555 & 1.30 & 32556 & - & 1 & 2020 & 950 & 2884 & - & 864\\
+		burst & 2467 & 28.3 & 2215 (-252) & 0.508 & 1077 & 10.6 & 970 (-107) & 12.6 \\
+		spaced & 2468 & 5.14 & 2257 (-211) & 16.9 & 146 & 1.67 & 48.1 (-97.9) & 9.44 \\
+		realistic & 32556 & - & 32555 (-1) & 1.30 & 2884 & - & 2020 (-864) & 950 \\
 		\hline
 	\end{tabular}
 	\caption{Difference between emulated and simulated values. All values are in seconds.}
@@ -470,15 +469,81 @@ Indeed, the scheduler performed drastically better in the simulated scenario.
 We don't know the cause of this. As for the realistic workload, the simulated
 metrics correspond exactly to the ones measured in the emulated cluster. At
 first glance it seems that the waiting times do not correspond, however we
-noticed during our experiments that the scheduler seemed to follow to scenarios
-for this workload leading to two different values of the mean waiting time.
-This is especially obvious on figure \ref{fig:timestep_real} where we notice
-two groups on the far left graph. Considering this, we can make the assumption
-that those waiting time values are either $\mu + \sigma$ or $\mu - \sigma$,
-that is to say, in this case, 2970 or 1070. We can then consider 2970 and 2884
-to be part of the same group since they are fairly close to each other and
-assume that the simulation was accurate.
+noticed during our experiments that the scheduler seemed to follow two
+differents scenarios for this workload leading to two different values of the
+mean waiting time.  This is especially obvious on figure
+\ref{fig:timestep_real} where we notice two groups on the far right graph.
+Considering this, we can make the assumption that the real waiting times values
+either $\mu + \sigma$ or $\mu - \sigma$, that is to say, in this case, 2970 or
+1070. We can then consider 2970 and 2884 to be part of the same group since
+they are fairly close to each other and assume that the simulation was
+accurate. Running more experiments with the emulated realistic workload would
+give us better insights, unfortunately we did not have enough time on our
+hands.
 
-\subsection{Discussion}
+\section{Discussion and future work}
 
-TODO
+First, it is important to note some fundamental differences between grid
+computing and cluster computing, differences because of which we had to put
+aside large components of SimGrid models. Parallel computing relies on the
+ability to schedule a task on multiple nodes.  The different processes
+communicate with each others thanks to protocols such as the \textit{Message
+Passing Interface (MPI)}. With Kubernetes however one cannot schedule one pod
+on multiple nodes because it is not meant to run highly parallel tasks.
+Furthermore, it would break the paradigm of encapsulation of containers within
+nodes which is part of what make Kubernetes a powerful tool for cluster
+administration.  Therefore, we are forced to ignore one of the major features
+of SimGrid which is the simulation of parallel tasks and MPI applications
+(SimGrid has an entire module for the simulation of MPI applications named SMPI
+\cite{casanova:hal-01017319}).\\
+
+Batkube, as a simulator, has limited features, however it is functional and
+proved that it is possible to adapt any Kubernetes scheduler to Batsim. It
+supports delay jobs that can request resources such as cpu or memory. In its
+current state the API supports the default Kubernetes scheduler, which is  a
+very capable scheduler and is widely used in the industry. For now, it has several flows that need to be improved upon.
+
+The API of Batkube needs further development in order to correctly support
+other Kubernetes schedulers. Partial or wrong implementations of the endpoints
+lead to numerous bugs and misbehavior of the scheduler throughout the
+development, and while the most critical issues have been resolved, some errors
+remain like the over allocation of resources.
+
+The obligatory synchronization of the time between the scheduler and Batsim
+make this simulator not viable for large scale simulations. As we saw in the
+experiments, a simple workload with 200 delay jobs of 170 seconds submitted
+every 10 seconds already requires nearly two minutes of simulation. This is due
+to the frequent exchanges between Batsim and Batkube over the json interface,
+and the fact that we wait up to \textit{timeout value} every exchange. This is
+why we did not conduct any scalability experiment. This kind of experiment
+would require more time, but also more resources. Indeed, we observed that the
+Kubernetes scheduler require more memory on long running experiments and
+hindered our capacity of running long simulations. Also, it would simply not be
+relevant because scalability is not our objective here.\\
+
+Batkube simulation capabilities can be expanded on by implementing the rest of
+Batsim own capabilities. A single pod cannot be scheduled on several nodes but
+one node can still have a theoretically unlimited capacity in resources, and
+pods inside one same node can communicate with each others and work together to
+execute a parallel
+task\footnote{https://kubernetes.io/docs/concepts/workloads/controllers/job/}.
+With a bit of tweaking in the API one could model simple parallel tasks. Batsim
+also supports energy models which could become a critical metric in the near
+future, considering the climate urgency. Storage resoures can be added as well
+for a more complete simulation of an online service with a database. Finally,
+Batsim supports external events such as resource failures and other user
+defined events.
+
+With a deeper understanding of the Kubernetes api-server internals one could
+support any other scheduler and compare them against each others. Also,
+Kubernetes allowing the use of multiple schedulers, studies could be conducted
+on their interaction with each other and how their combinations could improve
+the general scheduling performances on various system topologies. Extensive
+studies can be realized on schedulers competing with each others on the same
+resources, justifying the need for a simulator. Also, since the api-server is
+the central component of Kubernetes, any other tool of the k8s ecosystem could
+be supported given a more complete API. During the development we already made
+use of their command line interface, \texttt{kubectl}, to monitor the resources
+and we could imagine plugging some monitoring tools to the simulator such as
+\texttt{kubetop}. All this offer the perspective of a fully fledged Kubernetes
+simulator based on the sound models of SimGrid.
