@@ -270,22 +270,29 @@ Kubernetes nodes.
 
 \section{Time interception} \label{sec:time-hijack}
 
-TODO: batsky project with oar scheduler.
-
 Kubernetes schedulers are not event based schedulers. They constantly check on
 the cluster state and make decisions accordingly, therefore they are based on
 machine time to make their decisions. However, in order to have correct
 simulations, the scheduler needs to be synchronized with simulation time. We
 then need to intercept all calls to machine time to redirect them to the
-simulator. There are two approaches to this: either we patch the C library used
-by Go (figure \ref{fig:patch-C}) and compile Go using our library, or we patch
-Go's time library (\ref{fig:patch-time}) and then patch the scheduler so it uses
-our library instead of the official one.
+simulator.
 
-Using this tool we patched the kube-scheduler, that we used during our
-experiments, and also the kube-batch scheduler.  The latter received the patch
-without any issues, but we couldn't use it because it implied more development
-on the batkube api to support it.
+This has been done already with the
+OAR\footnote{https://github.com/oar-team/oar3} scheduler which was isolated and
+adapted to Batsim using a script written in
+python\footnote{https://github.com/oar-team/oar3/blob/master/oar/kao/bataar.py}.
+In order to ensure synchronization of the time between the scheduler and
+Batsim, a c library called batsky\footnote{https://github.com/oar-team/batsky}
+was developed. Once compiled with this library, all calls from the scheduler to
+get machine time are redirected to the simulator.
+
+Unfortunately, we were not able to recompile Go using a custom C library, which
+would have redirected every call to machine time to Batkube. Insted, we
+reimplemented parts of the Go \textit{time} library and patched the
+kube-scheduler with it (figure \ref{fig:patch-time}) to redirect the calls to
+machine time.  This tool was also tested against the kube-batch scheduler which
+received the patch without any issues, but that we couldn't use with the
+simulator because it implied more development on the batkube api to support it.
 
 \begin{figure}[]
 	\centering

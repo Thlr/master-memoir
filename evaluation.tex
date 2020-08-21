@@ -83,10 +83,12 @@ just do not wish to add this other layer of complexity to our experiments.
 	\item A \textit{spaced} workload, where jobs of the same nature are
 		submitted at regular intervals.  200 delays with duration 170s,
 		and requesting 1 cpu are submitted every 10s.
-	\item A \textit{realistic} workload, which is a trace extracted from the  Karlsruhe Institue of Technology ForHLR II System.
+	\item A \textit{realistic} workload, which is a trace extracted from
+		the Karlsruhe Institue of Technology ForHLR II System. It is
+		composed of 49 jobs including both long running jobs (truncated
+		up to an hour) and groups of smaller jobs often submitted
+		simultaneously, spanning over 10 hours.
 \end{itemize}
-
-TODO: realistic workload stats.
 
 The first two workloads are straight forward and could be generated with the
 use of a plain text editor (understand \texttt{vim} and its macros). The third
@@ -389,30 +391,6 @@ case here with these simple workloads and the absence of jobs preemption, it
 might have an impact when the scheduler is susceptible to make scheduling
 decisions on jobs that are already scheduled.
 
-%\subsection{Parameters inter dependency}
-%
-%Studying the parameters independently is not enough, we need to study their
-%impact relatively to each others.
-%
-%For instance, the \textit{maximum simulation time step} and the
-%\textit{timeout} value are tightly linked together regarding their effect on
-%accuracy. Both decreasing \textit{timeout} and increasing \textit{maximum
-%simulation time step} will increase the amount of delays in the decision making
-%of the scheduler, but also their length, multiplying the impact on accuracy.
-%
-%On the other hand, we do not except the \textit{minimum wait delay} to have any
-%impact other than increasing the simulation stability.
-%
-%PROTOCOL: We know the simulations are statistically the same by now, and we're
-%confident enough to run only one simulation per point. Timeout value ranges
-%from 5ms to 50ms, max timestep ranges from 1s to 100s (logarithmic again).
-%
-%TODO: Facet graphs: timestep vs timeout vs accuracy vs simulation time. We can
-%define accuracy as one on the euclidean distance between emulated and simulated
-%makespan and mean waiting time: \[\frac{1}{\sqrt{(makespan_{sim} -
-%	makespan_{emu})^2 + (waitingtime_{sim} - waitingtime_{emu})^2}}\]
-%
-
 \section{Deviation of the simulation with reality}
 
 Thanks to our emulated cluster we were able to run those same workloads on real
@@ -456,7 +434,9 @@ waiting time to be lower than the emulated ones.
 		realistic & 32556 & - & 32555 (-1) & 1.30 & 2884 & - & 2020 (-864) & 950 \\
 		\hline
 	\end{tabular}
-	\caption{Difference between emulated and simulated values. All values are in seconds.}
+	\caption{Difference between emulated and simulated values. All values
+	are in seconds. The difference with emulated results is indicating with
+the simulated means.}
 	\label{tab:deviation}
 \end{table}
 
@@ -479,7 +459,9 @@ either $\mu + \sigma$ or $\mu - \sigma$, that is to say, in this case, 2970 or
 they are fairly close to each other and assume that the simulation was
 accurate. Running more experiments with the emulated realistic workload would
 give us better insights, unfortunately we did not have enough time on our
-hands.
+hands. In that regard, we would have benefited from a realistic workload
+composed of more jobs and spanning over a shorter period of time. This is an
+overlooked part of our experimentations.
 
 \section{Discussion and future work}
 
