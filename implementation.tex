@@ -156,10 +156,28 @@ As stated before Kubernetes revolves around its API server which is its central
 component. All operations between components go through this REST API. These
 operations take various forms like user interactions through the commande line
 interface \textbf{kubectl}, scheduling operations or management of cluster data
-on \textbf{etcd}. We then decided to re-build the API in order to simulate any
-cluster to -- almost -- any Kubernetes scheduler.
+on \textbf{etcd}. Kubernetes schedulers can communicate with the api-server in
+various protocols. These can be text based like json messages or binary with
+the use of Google's protocol buffers. To help with building schedulers,
+Kubernetes has developed several
+clients\footnote{https://kubernetes.io/docs/reference/using-api/client-libraries/}
+to facilitate communication with the API. 
 
-TODO: Talk about Kubernetes schedulers. What they are based on, how they communicate to Kubernetes.
+The most notable Kubernetes scheduler is the
+\texttt{kube-scheduler}\footnote{https://github.com/kubernetes/kube-scheduler}
+which is the default and also most commonly used sheduler.
+\texttt{kube-batch}\footnote{https://github.com/kubernetes-sigs/kube-batch} is
+a project aimed at developing batch scheduling in Kubernetes, which is already
+used by several projects. One of those projects is
+Volcano\footnote{https://github.com/volcano-sh/volcano} already used in some
+platforms for computational and data intensive domains such as deep learning or
+genome sequencing in Kubernetes. Yet another important scheduler is Poseidon
+\footnote{https://github.com/kubernetes-sigs/poseidon} which is rather an
+adaptive layer to Firmament. All those schedulers make use of the Go client to
+communicate with the api-server.
+
+We then decided to re-build the API in order to simulate any
+cluster to any Kubernetes scheduler.
 
 \begin{figure}[h]
 	\centering
@@ -264,12 +282,10 @@ by Go (figure \ref{fig:patch-C}) and compile Go using our library, or we patch
 Go's time library (\ref{fig:patch-time}) and then patch the scheduler so it uses
 our library instead of the official one.
 
-Using this tool we patched the
-kube-scheduler\footnote{https://github.com/kubernetes/kube-scheduler}, that we
-used during our experiments, and also the
-kube-batch\footnote{https://github.com/kubernetes-sigs/kube-batch} scheduler.
-The latterreceived the patch without any issues, but we couldn't use it because
-it implied more development on the batkube api to support it.
+Using this tool we patched the kube-scheduler, that we used during our
+experiments, and also the kube-batch scheduler.  The latter received the patch
+without any issues, but we couldn't use it because it implied more development
+on the batkube api to support it.
 
 \begin{figure}[]
 	\centering
