@@ -113,15 +113,59 @@ one specific problem, and end up being built upon over-fitted models to
 validate this problem. These simulators cannot make sense in any other context
 and therefore can not be re-used for any other project.
 
-There is a common belief that specialization is necessary to obtain the most
-accurate results as possible on a given problem.
+Intuitively, one can believe that specialization is necessary to obtain the
+most accurate results as possible on a given problem. This is why so many
+domain specific simulators have been developed over the years and we count
+simulators in every field of distributed systems.  PeerSim \cite{p2p09-peersim}
+and OverSim \cite{baumgart2009oversim} for example are simulators specialized
+in the simulation of peer to peer networks. In a related domain, SimBA
+\cite{simBA}, SimBOINC \cite{kondo2007simboinc} and SimGrid-BOINC
+\cite{simgrid-boinc} are simulators focused on the modeling of Volunteer
+Computing networks. In the HPC domain, we count two main branches:
+\textit{off-line} and \textit{on-line} simulation. In \textit{on-line}
+simulation, an application is executed on a platform that tries to mimic a
+target platform. Therefore, it falls under the domain of emulation rather than
+simulation. In \textit{off-line} simulation the simulator replays a
+time-stamped log from one execution of an application, as if it were happening
+on a different system. We count numerous simulators in this domain: LogGOPSim
+\cite{loggopsim}, Psins \cite{Psins} or BigSim \cite{bigsim} for instance. Coud
+computing also has its simulators, we can cite CloudSim \cite{cloudsim} for
+example or GroudSim \cite{groudsim} which simulates an environment with both
+Cloud and Grid capabilities. Some simulators are even specifically tied to some
+RJMS such as YARNSim \cite{7152529} or the SLURM simulator
+\cite{slurm-simulator}.
+
 SimGrid \cite{casanova:hal-01017319} however is a framework for simulation that
 builds on the idea that versatility serves accuracy, while ensuring high
 scalability.
 
-TODO: add some ref to domain specific schedulers that would not be covered by
-the next sections.
-
+%NOTES
+%
+%Simulators are often intentionally very specialized. Some are aimed at specific
+%domains like peer-to-peer computing simulators like PeerSim
+%\cite{p2p09-peersim} and OverSim \cite{baumgart2009oversim}, or volunteer
+%computing simulators (\cite{simBA}, \cite{alonso2017combos})
+%
+%Simulators based on simgrid: 
+%
+%Problems with simulation: often unrealeased simulators, or designed for a
+%specific project, or short lived (OptorSim)
+%
+%Simulators specific to platforms: YARNSim, SLURM simulator\footnote{https://github.com/ubccr-slurm-simulator/slurm\_simulator} 
+%
+%Exemples of papers with custom unreleased simulators: \cite{yabuuchi2019lowlatency} by the same guys who made kubernetes-simulator.\\
+%
+%list of simulators
+%\begin{itemize}
+%	\item SimGrid, GridSim, CloudSim, GroudSim (to cite the most important).
+%	\item Other simulators in unrelated domains: SimBA (volunteer computing), PeerSim, OverSim (peer to peer), WRENCH (workflows).
+%	\item HPC simulation: off-line vs on-line
+%	\item Interconnected networks Simulation: INSEE (environment for interconnected networks), SICOSYS. Aimed to be used with other tools like SIMICS to extend th ecapabilities.
+%	\item Low level simulation: SIMICS, RSIM and SimOS (multiprocessor systems).
+%	\item discontinued/old projects: GSSIM, Simbatch
+%\end{itemize}
+%
+%Kubernetes simulation: k8-cluster-simulator, joySim.
 \section{SimGrid}
 
 SimGrid \cite{casanova:hal-01017319} is a framework for builing distributed
@@ -441,30 +485,3 @@ models. When Alea and Accasim chose to implement simple models in order to
 focus on scalability, SimGrid models are more advanced and require more
 computing power.
 
-%NOTES
-%
-%Simulators are often intentionally very specialized. Some are aimed at specific
-%domains like peer-to-peer computing simulators like PeerSim
-%\cite{p2p09-peersim} and OverSim \cite{baumgart2009oversim}, or volunteer
-%computing simulators (\cite{simBA}, \cite{alonso2017combos})
-%
-%Simulators based on simgrid: 
-%
-%Problems with simulation: often unrealeased simulators, or designed for a
-%specific project, or short lived (OptorSim)
-%
-%Simulators specific to platforms: YARNSim, SLURM simulator\footnote{https://github.com/ubccr-slurm-simulator/slurm\_simulator} 
-%
-%Exemples of papers with custom unreleased simulators: \cite{yabuuchi2019lowlatency} by the same guys who made kubernetes-simulator.\\
-%
-%list of simulators
-%\begin{itemize}
-%	\item SimGrid, GridSim, CloudSim, GroudSim (to cite the most important).
-%	\item Other simulators in unrelated domains: SimBA (volunteer computing), PeerSim, OverSim (peer to peer), WRENCH (workflows).
-%	\item HPC simulation: off-line vs on-line
-%	\item Interconnected networks Simulation: INSEE (environment for interconnected networks), SICOSYS. Aimed to be used with other tools like SIMICS to extend th ecapabilities.
-%	\item Low level simulation: SIMICS, RSIM and SimOS (multiprocessor systems).
-%	\item discontinued/old projects: GSSIM, Simbatch
-%\end{itemize}
-%
-%Kubernetes simulation: k8-cluster-simulator, joySim.
