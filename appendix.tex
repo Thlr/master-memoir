@@ -1,106 +1,24 @@
-\section{Reproducing the experiments}
+\section{Reproducing the experiments} \label{sec:reproduce-expes}
 
-TODO: organize this part (for now everything is simply copy pasted here) and complete it\\
-
-The command used to run the scheduler is
-\begin{minted}{bash}
-	./scheduler --kubeconfig=<kubeconfig.yaml>
-	--kube-api-content-type=application/json --leader-elect=false
-	--scheduler-name=default
-\end{minted}
-\noindent Only the path to the \texttt{kubeconfig.yaml} changes to either point the the
-emulated or simulated cluster.
-
-Batkube is run with \mint{bash}| ./batkube --scheme=http --port=8001 |
-\noindent followed by the simulator options.
+All scripts can be found in the
+batkube-test\footnote{github.com/oar-team/batkube-test} repository, under the
+\texttt{scripts} repository. The exact commands used to run Batkube, the
+scheduler and Batsim are described in the shell scripts. Running an experiment
+on an emulated cluster can be done with
+\texttt{real-clutser-experiment/main.go}, after starting a cluster with
+\texttt{scripts/startup-cluster.sh}. Both of these scripts are shipped with a
+help section. Finally, \texttt{swf-translate/swf-to-json.go} is the script used
+to process swf workloads. It also has a help section.\\
 
 Batsim is run with option \texttt{enable-compute-sharing}: for a reason
 unknown, Kubernetes scheduler tends to over allocate resources in some cases
 (especially with smaller jobs) which makes Batsim crash if this option is
-disabled. We must allow compute sharing even when it is not expected in order
-to capture the scheduler behavior as precisely as possible.\\
+disabled. Then, we must allow compute sharing even when it is not expected in
+order to capture the scheduler behavior as precisely as possible.\\
 
-Those are the Batkube options that did not vary during the experiments:
-\begin{itemize}
-	\item \texttt{backoff-multiplier}: 2 (default value)
-	\item \texttt{detect-scheduler-deadlock}: true. Obligatory for
-		automating experiments
-	\item \texttt{fast-forward-on-no-pending-jobs}: the scheduler is not
-		susceptible to reschedule running jobs (there is a de-scheduler
-		for that) so we might as well fast forward when there is
-		nothing to schedule.
+\section{Batsim events handled by Batkube} \label{sec:batmsg-list}
 
-\end{itemize}
-
-The option \texttt{scheduler-crash-timeout} did vary between experiments to
-make up for odd scheduler crash detections (it was increased up to 30s).
-However, it did not have any impact on the results as we do not take into
-account simulation time in case of failure.
-
-TODO
-
-Limits: explain how dirty the resource management system is (non
-thread safe, stored in memory, little hacks for the resource version) and
-briefly write on how it induces problems for the scheduler (over allocating
-resources) (we talk about this in the evaluation part).
-
-\begin{figure}
-	\begin{minted}{js}
-{
-  "now": 1024.24,
-  "events": [
-    {
-      "timestamp": 1000,
-      "type": "EXECUTE_JOB",
-      "data": {
-        "job_id": "workload!job_1234",
-        "alloc": "1 2 4-8",
-      }
-    },
-    {
-      "timestamp": 1012,
-      "type": "EXECUTE_JOB",
-      "data": {
-        "job_id": "workload!job_1235",
-        "alloc": "12-100",
-      }
-    }
-  ]
-}
-\end{minted}
-\caption{Example of a Batsim message}
-\label{fig:batmsg_ex}
-\end{figure}
-
-
-\begin{figure}
-	\begin{minted}{js}
-{
-    "nb_res": 1,
-    "jobs": [
-	{"id":"1", "subtime":0, "res": 1, "profile": "delay10"},
-	{"id":"2", "subtime":3.4, "res": 1, "profile": "delay10"}
-    ],
-    "profiles": {
-	"delay10": {
-	    "type": "delay",
-	    "delay": 10,
-	    "scheduler": "default",
-	    "cpu": "1.5",
-	    "memory": "500Mi"
-	}
-    }
-}
-	\end{minted}
-	\caption{Example of a Batsim workload}
-	\label{fig:bat_wl_ex}
-\end{figure}
-
-TODO
-
-Explain the first implementation of timer requests that generate call me laters.
-
-\subsection{batsim messages} \label{sec:batmsg}
+Here are all the Batsim events that are handled by Batkube.
 
 \subsubsection{From Batsim to the scheduler}
 
@@ -147,9 +65,62 @@ simulation has ended: knowing that there are no more jobs susceptible to be
 scheduled allow us to fast forward to the end of the simulation, thus saving
 execution time.\\
 
-\subsection{Batsim integration with Kubernetes} \label{sec:imp_levels}
 
-Here are the options that were considered but not chosen.
+\begin{figure}
+	\begin{minted}{js}
+{
+  "now": 1024.24,
+  "events": [
+    {
+      "timestamp": 1000,
+      "type": "EXECUTE_JOB",
+      "data": {
+        "job_id": "workload!job_1234",
+        "alloc": "1 2 4-8",
+      }
+    },
+    {
+      "timestamp": 1012,
+      "type": "EXECUTE_JOB",
+      "data": {
+        "job_id": "workload!job_1235",
+        "alloc": "12-100",
+      }
+    }
+  ]
+}
+\end{minted}
+\caption{Example of a Batsim message}
+\label{fig:batmsg_ex}
+\end{figure}
+
+\begin{figure}
+	\begin{minted}{js}
+{
+    "nb_res": 1,
+    "jobs": [
+	{"id":"1", "subtime":0, "res": 1, "profile": "delay10"},
+	{"id":"2", "subtime":3.4, "res": 1, "profile": "delay10"}
+    ],
+    "profiles": {
+	"delay10": {
+	    "type": "delay",
+	    "delay": 10,
+	    "scheduler": "default",
+	    "cpu": "1.5",
+	    "memory": "500Mi"
+	}
+    }
+}
+	\end{minted}
+	\caption{Example of a Batsim workload}
+	\label{fig:bat_wl_ex}
+\end{figure}
+
+\section{Batsim integration with Kubernetes: other options} \label{sec:imp_levels}
+
+Here are the options that were considered but not chosen for Batsim integration
+with the Kubernetes ecosystem.
 
 \subsubsection{In between the api and the kubelets}
 
@@ -214,7 +185,7 @@ since there are tools to help us generate it from its specification.
 	\label{fig:partial_reimp}
 \end{figure}
 
-\subsection{Time interception: the C library approach}
+\section{Time interception: the C library approach}
 
 An attempt was first made to patch a custom C library, which is the lowest level
 solution. Going for the low level solution would truly redirect all calls to
@@ -231,16 +202,3 @@ implement.
 	\caption{Option A: patching the C library}
 	\label{fig:patch-C}
 \end{figure}
-
-\section{Batkube features}
-
-At the time this paper is written, Batkube is in a very early state. The
-objective of this work is to establish whether it is possible or not to
-implement such interface, and what the time synchronization would imply for the
-Kubernetes scheduler.
-
-Therefore, Batkube only supports 
-
-TODO: Clearly state what Batkube is capable of, and what it does not do. This
-helps describing only the parts of the tools we use while leaving the rest for
-the reader to look for on official documentation.

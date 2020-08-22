@@ -81,7 +81,9 @@ than a fully fledged Kubernetes simulator which is why only consider a subset
 of these messages. We provide a list of supported events and their description
 in the section \ref{batmsg} of the appendix. More information on Batsim's
 protocol is available on Batsim
-documentation\footnote{https://batsim.readthedocs.io/en/latest/protocol.html}
+documentation\footnote{https://batsim.readthedocs.io/en/latest/protocol.html},
+and a list of the events handled by Batkube can be found in section
+\ref{sec:batmsg-list}, with examples of some Batsim messages.
 
 Batsim's output takes the form of a csv file containg information about the
 jobs executions. Mainly we take interest in their submission time, execution
@@ -193,9 +195,9 @@ cluster to any Kubernetes scheduler.
 In order to adapt Kubernetes schedulers for use with Batsim we need to position
 ourselves between the Kubernetes scheduler and the cluster. Several level of
 implementations are possible, and after some considerations described in
-section \ref{sec:imp_levels} of the appendix we decided to reimplement
-Kubernetes API. This new implementation will act as a Kubernetes cluster to the
-scheduler, and as an event based scheduler to Batsim.
+section \ref{sec:imp_levels} we decided to reimplement Kubernetes API. This new
+implementation will act as a Kubernetes cluster to the scheduler, and as an
+event based scheduler to Batsim.
 
 \begin{figure}[h]
 	\centering
@@ -364,20 +366,29 @@ return now\;
 \label{alg:now}
 \end{algorithm}
 
+A small disclaimer is due here. Algorithm \ref{alg:now} describes the general
+concept behind batsky-go, but the true implementation differs slightly from
+what is presented here to account for timer requests. Timers durations are
+forwarded as an array of integers to Batkube which in turns translates them to
+appropriate CALL\_ME\_LATER events. This allowed Batkube to requests Batsim to
+wake up exactly when the scheduler timers are supposed to fire. This feature
+however was not used for our experimentations and wasn't tested any further.
+
 Let us call \texttt{time.Now()} calls \textit{time requests}. Channels enable
 us to centralize time requests from multiple simultaneous callers in one place
 before forwarding all requests to Batkube. There are two parts to
 \texttt{batsky-go}. One is composed of the many requesters, and the other one
 is the loop centralizing requests and handling exchanges with Batkube which we
-will call ``the main loop''.  Figure \ref{alg:now} gives the new implementation
-of time.Now(), which is the ``requester'' part. Each request is identified
-using a unique id to keep track of the pending requests that are waiting for a
-response. \texttt{resMap} is a thread safe channel map that is shared amongst
-the requesters and the main loop containing (id, response channel) key-value
-pairs. When a new request is made, a new entry is created on this map and the
-requester will wait for a response on the newly created channel, associated
-with its id. All requests are sent to a unique channel \texttt{req}. To make a
-new request, the requester simply sends its id to this channel.
+will call ``the main loop''.  The algorithm \ref{alg:now} gives the new
+implementation of time.Now(), which is the ``requester'' part. Each request is
+identified using a unique id to keep track of the pending requests that are
+waiting for a response. \texttt{resMap} is a thread safe channel map that is
+shared amongst the requesters and the main loop containing (id, response
+channel) key-value pairs. When a new request is made, a new entry is created on
+this map and the requester will wait for a response on the newly created
+channel, associated with its id. All requests are sent to a unique channel
+\texttt{req}. To make a new request, the requester simply sends its id to this
+channel.
 
 \begin{algorithm}[]
 \DontPrintSemicolon
@@ -529,23 +540,8 @@ the simulation. We study those effects in section \ref{sec:params-eval}.
 		pending, waiting for a decision.
 \end{itemize}
 
-%\begin{algorithm}[H]
-%	\caption{Synchronization of the time}
-%	\label{alg:time-sync}
-%	\DontPrintSemicolon
-%	\KwInput{simulationTimeout: time.Duration; incrementTimeStep: time.Duration; incrementValue: time.Duration}
-%	stopWaitingForMessages := false\;
-%	incremented := 0\;
-%	\While{!stopWaitingForMessages}{
-%		getSchedulerDecisions()\;
-%		\If{decisionReceived() or incremented >= simulationTimeout}{
-%			stopWaitingForMessages = true
-%		}\ElseIf{timeSinceLastIncrement() > incrementTimeStep}{
-%			\tcc{this last condition is here to slow down this process and give time for the scheduler to take its decisions}
-%			now = now + incrementValue\;
-%			incremented = incremented + incrementValue
-%		}
-%	}
-%	addCallMeLater() \tcc{Add a CALL\_ME\_LATER event with timestamp now + incrementValue}
-%\end{algorithm}
-
+Like stated in section \ref{sec:time-hijack}, Batkube supports a feature to
+wake up the scheduler exactly when its timers expire. However, this approach
+increases drastically the number of exchanges between Batkube and Batsim thus
+decreasing the simulation performances. This feature is considered deprecated
+and wasn't tested any further.
