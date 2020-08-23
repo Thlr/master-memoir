@@ -13,9 +13,9 @@
 
 Even though the containers paradigm enabled developing new applications with
 ease, many questions remain: what type of infrastructure would be best suited
-for my application? Would my application benefit from more cpu cores? How would
-different scheduling policies affect my application? Would my batch jobs
-compute faster with a different topology? To answer these interrogations one
+for my application ? Would my application benefit from more cpu cores ? How would
+different scheduling policies affect my application ? Would my batch jobs
+compute faster with a different topology ? To answer these interrogations one
 must conduct studies to experiment with different configurations.\\
 
 Studying an entire computing infrastructure is not an easy task, first because
@@ -32,16 +32,16 @@ there are objectives to be achieved.
 
 As a consequence, there are no general tools to study those systems.
 Furthermore, as the biggest supercomputers are approaching the exascale
-barrier\footnote{https://www.top500.org/news/japan-captures-top500-crown-arm-powered-supercomputer/}
+barrier\footnote{\url{https://www.top500.org/news/japan-captures-top500-crown-arm-powered-supercomputer/}}
 and consist of thousands of nodes with millions of cpu cores (more than 7M for
 the new ``Fugaku'' Japanese supercomputer), no human would be capable of
 building a general mathematical model that would be accurate enough to predict
 the behavior of those systems under varying conditions. Also, interactions
 between the various components of those systems may lead to unexpected
-behavior\cite{10.1007/978-3-319-09873-9_12} that can hardly be predicted.
+behavior \cite{10.1007/978-3-319-09873-9_12} that can hardly be predicted.
 
 Scientist still have tools to study those systems. More precisely, there are 3
-options as described in\cite{legrand2015scheduling}: \textit{in vivo},
+options as described in \cite{legrand2015scheduling}: \textit{in vivo},
 \textit{in vitro} and \textit{in silico} studies, which correspond respectively
 to experiments on real testbeds, emulation and simulation.  
 
@@ -273,7 +273,7 @@ schedulers.
 
 \section{Batsim}
 
-Batsim\cite{dutot:hal-01333471} is a infrastructure simulator built upon
+Batsim \cite{dutot:hal-01333471} is a infrastructure simulator built upon
 the SimGrid framework. Its main objective is to enable the study of RJMS
 without the need to implement a custom simulator, by decoupling the decision
 process from the simulator itself.\\
@@ -285,7 +285,7 @@ existing application traces, Batsim takes a user defined workload as an input.
 This allows the user to fine tune workloads in order to study very specific
 issues and achieve different level of realism. In addition, it provides tools
 to translate workloads between its own format and the
-SWF\footnote{https://www.cs.huji.ac.il/labs/parallel/workload/swf.html} format,
+SWF\footnote{\url{https://www.cs.huji.ac.il/labs/parallel/workload/swf.html}} format,
 which is a commonly used structure for HPC workloads.
 
 Batsim, just like SimGrid, aims at being versatile.  Batsim computation
@@ -318,7 +318,7 @@ the idea of encapsulated applications further than fully virtualized machines
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=\textwidth]{./imgs/container_evolution.png}
-	\captionsource{Evolution of application deployment.}{https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/}
+	\captionsource{Evolution of application deployment.}{\url{https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/}}
 	\label{fig:container-evolution}
 \end{figure}
 
@@ -360,12 +360,13 @@ In this work we use Kubernetes schedulers as batch schedulers because Ryax
 makes use of workflow workloads which are closer to batch workloads than
 service based workloads. Also, batch scheduling is our domain of origin (Batsim
 	was developed in close relation with the teams behind the grid
-computing simulator SimGrid\cite{casanova:hal-01017319} and the resource
-manager OAR \cite{oar}), and because it is convenient for us to test our
+computing simulator SimGrid \cite{casanova:hal-01017319} and the resource
+manager OAR\footnote{\url{http://oar.imag.fr/start}}), and because it is convenient for us to test our
 approach with HPC workloads.  However, even though Kubernetes does have means
-to handle such workloads like batch schedulers \cite{kube-batch} and a special
-type of
-resource\footnote{https://kubernetes.io/docs/concepts/workloads/controllers/job/},
+to handle such workloads like batch
+schedulers\footnote{\url{https://github.com/kubernetes-sigs/kube-batch}} and a
+special type of
+resource\footnote{\url{https://kubernetes.io/docs/concepts/workloads/controllers/job/}},
 these two fields differ fundamentally because of the nature of the issues they
 tackle. We do not intend to evaluate scheduler performance but rather prove
 that such studies are possible with Batsim, which is why this work is conducted
@@ -387,19 +388,20 @@ computing the task is simply restarted without any other consideration -- other
 than ensuring its dependencies are restarted with it.
 
 Kubernetes is now the standard for AI and Machine Learning as shown by the many
-efforts at making this coupling an efficient
-environment\cite{lee2017design}\cite{233001}\cite{10.1145/3154842.3154845},
-which brought an increasing interest for container driven HPC aswell and
-Kubernetes for HPC in particular. Batch schedulers such as
-kube-batch\footnote{\url{https://github.com/kubernetes-sigs/kube-batch}} have
+efforts at making this coupling an efficient environment (\cite{lee2017design},
+\cite{233001}, \cite{10.1145/3154842.3154845}), which brought an increasing
+interest for container driven HPC aswell and Kubernetes for HPC in particular.
+Batch schedulers such as
+kube-batch have
 been implemented for kube, and numerous HPC applications like
-SLURM\footnote{\url{https://slurm.schedmd.com/containers.html}} now support containers as well.
+SLURM\footnote{\url{https://slurm.schedmd.com/containers.html}} now support
+containers as well.
 
 Indeed, containers have many advantages from which HPC users could benefit
 from.
 \begin{itemize}
 	\item First off, research has shown that Kuberenetes offer similar
-		performance to more standard bare metal HPC\cite{8950981}.
+		performance to more standard bare metal HPC \cite{8950981}.
 	\item Users will get the same environment everywhere making up for a
 		uniform and standardized workplace.
 	\item Portability : users could seamlessly hop from one infrastructure
@@ -419,7 +421,8 @@ Despite all those advantages, Kubernetes is not ready yet to be used in proper
 HPC environment because it lacks vital components like a proper batch job
 queuing system and support for MPI applications. Also, containers are not a
 good fit for HPC because most of the isolation given by containers has to be
-bypassed \cite{mercier:tel-02284996}. Still, containers are becoming more and more integrated in modern infrastructures.
+bypassed \cite{mercier:tel-02284996}. Still, containers are becoming more and
+more integrated in modern infrastructures.
 
 \section{Related work}
 
@@ -451,7 +454,7 @@ implement an adaptive layer to support other schedulers.\\
 Two simulators are very close to Batsim in terms of capabilities and
 objectives, that is to say the study on scheduling policies.
 
-Alea2\cite{alea2} is a grid computer system simulator based on GridSim. It is
+Alea2 \cite{alea2} is a grid computer system simulator based on GridSim. It is
 therefore written in Java and cross platform. Like Batsim, its
 \textit{ready-to-use} philosophy allow experimenting with different scheduling
 policies with little set up overhead.  Alea2 strength lies in its modularity:
@@ -465,7 +468,7 @@ Format (SWF)} or \textit{Grid Workloads Format (GWF)}. Batsim proposes a script
 to process SWF files into its own input format but does not handle them
 directly.
 
-Accasim\cite{10.1007/978-3-319-73353-1_12} is a simulator for studying
+Accasim \cite{10.1007/978-3-319-73353-1_12} is a simulator for studying
 \textit{Workload Management Systems (WMS)} in HPC infrastructure. It is similar
 to Alea in the sense that the decision process is not decoupled from the
 simulator and standard scheduling algorithms are implemented in Accasim, so
@@ -484,6 +487,6 @@ evaluate the scheduler computing needs or memory usage independently, as if it
 was running in real conditions. Performance wise, we cannot really compare
 Batsim with Alea and Accasim because of the fundamental differences in their
 models. When Alea and Accasim chose to implement simple models in order to
-focus on scalability, SimGrid models are more advanced and require more
-computing power.
+focus on scalability, SimGrid models, which are consequently Batsim models, are
+more advanced and require more computing power.
 

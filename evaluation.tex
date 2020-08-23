@@ -1,7 +1,8 @@
 \chapter{Evaluation and discussion}
 
-Because SimGrid has already been thoroughly tested and validated, we do not
-need to run extensive experiments to validate Batkube simulation models.
+SimGrid benefits from 20 years of development, usage in various projects, and
+validation from other projects. It has been thoroughly tested and thus, we do
+not need to run extensive experiments to validate Batkube simulation models.
 Moreover, since we only consider simple workloads containing only delay jobs,
 whose resource requests are only cpu, a simple look at the gantt charts allow
 us to evaluate the quality of the scheduling. Still, even though the underlying
@@ -52,7 +53,7 @@ which takes a Batsim workload as an input submits the jobs at the right time,
 watches the cluster state regularly, and writes the ouputs to csv files --
 which have the same format as Batsim's csv output files. We run each workloads
 10 times in order to get statistically meaningful results, except for the
-realistic workload which we only run once because it is already 10 hours long.
+realistic workload which we could only run once.
 
 The emulated cluster is limited in terms of variety and capacity. First,
 \texttt{start-cluster.sh} only allows the nodes to have the same amount of
@@ -100,18 +101,17 @@ very specifically to suit our needs which is why a custom script was
 implemented.
 
 First, a trace in standard workload format (swf) was obtained on a web
-archive\footnote{https://www.cs.huji.ac.il/labs/parallel/workload/logs.html}.
+archive\footnote{\url{https://www.cs.huji.ac.il/labs/parallel/workload/logs.html}}.
 The chosen workload was \texttt{KIT-FH2-2016-1.swf} (we give the file name for
 the reader to find the workload on the archives) because it is the most recent
 and is relatively lightweight. It is composed of 114,355 jobs spanning over 19
-months. Secondly, \texttt{evalys}\footnote{https://github.com/oar-team/evalys}
+months. Secondly, \texttt{evalys}\footnote{\url{https://github.com/oar-team/evalys}}
 allowed us to extract a subset of this workload lasting for a given period of
 time and with a given mean utilization of the resources. We chose a period of
 10h with 80\% utilization of the resources so as to keep reasonable experiment
 durations -- Later on we experiment with larger workloads to test out Batkube's
 limits in terms of scalability.  The third step is translating this extracted
-workload to a \texttt{json} file that can be read by Batsim, which is done with
-a script written in Go.
+workload to a \texttt{json} file that can be read by Batsim.
 
 After extracting this subset, we are left off with a workload containing jobs
 spanning up to 45h and using up to 24048 cpu (or cpu cores), which is undoable
@@ -137,7 +137,7 @@ for the following reasons.
 First, the host machines where the experiments were conducted had six cpu cores
 available. This means that if we want to be able to run an emulated cluster
 equivalent to this platform we can't exceed six cpu per node.  We use the
-maximum amount of available cores in order so as not to obtain too low values
+maximum amount of available cores to avoid obtaining too low values
 when normalizing the resource requests on the jobs. Indeed, Kubernetes only
 allows for a precision of 1 milicpu, so any value bellow that is not considered
 a significant number. Normalizing on six cpus instead of one allows us to get
@@ -169,9 +169,8 @@ The parameters are:
 		amount of time Batsim is allowed to jump forward in time.
 \end{itemize}
 
-We first study these parameters one by one by fixing the other parameters to
-some other value, then we study what effects these parameters have in respect
-to one another, and finally we conduct scalability experiments to test
+We first study these parameters one by one by fixing the other parameters, then we study what effects these parameters have in respect
+to one another. Finally we conduct scalability experiments to test
 Batkube's stability and performances on large workloads.
 
 \subsection{Minimum delay}
@@ -179,7 +178,7 @@ Batkube's stability and performances on large workloads.
 Earlier in the development of batkube we noticed that not leaving enough time
 to the scheduler each cycle lead it to crashes and deadlocks, ultimately
 failing the simulation. This time is independent from any decision making we
-would receive from it which is why it is called \textit{minimum wait delay}
+would receive from it. Which is why it is called \textit{minimum wait delay}
 instead of a plain \textit{timeout} - which is in fact another parameter we
 will study later.
 
@@ -285,18 +284,19 @@ to estimate the accuracy of the simulation. The other parameters are set to:
 	\label{fig:timeout}
 \end{figure}
 
-As we expected, a \textit{timeout value} too low results in the scheduler
-missing a few cycles each time it wants to communicate a decision making, thus
-increasing the makespan and mean waiting time.  As the \textit{timeout}
-increases, it reaches a point where the scheduler consistently sends decisions
-in the same cycle as the one where it has received the message that triggered
-the decision making. After this point though the curves keep decreasing ever so
-slightly, showing that the gaps keep receding afterwards. However, the gain in
-accuracy is shallow and considering that there is, again, a direct correlation
-between the \textit{timeout value} and the simulation time, it is desirable to
-keep this value at the limit where the results start to stabilize.  In this
-case, according to figure \ref{fig:timeout}, \texttt{timeout-value=50ms} seems
-like a decent compromise between accuracy and scalability.
+Figure \ref{fig:timeout} shows the results we obtained. As we expected, a
+\textit{timeout value} too low results in the scheduler missing a few cycles
+each time it wants to communicate a decision making, thus increasing the
+makespan and mean waiting time. As the \textit{timeout} increases, it reaches a
+point where the scheduler consistently sends decisions in the same cycle as the
+one where it has received the message that triggered the decision making. After
+this point though the curves keep decreasing slightly, showing that the gaps
+keep receding afterwards. However, the gain in accuracy is shallow and
+considering that there is, again, a direct correlation between the
+\textit{timeout value} and the simulation time, it is desirable to keep this
+value at the limit where the results start to stabilize.  In this case,
+according to figure \ref{fig:timeout}, \texttt{timeout-value=50ms} seems a
+decent compromise between accuracy and scalability.
 
 We observe slightly different behaviors with the realistic workload. First, the
 results stabilize earlier than the other workloads as we can see on the first
@@ -439,14 +439,14 @@ the simulated means.}
 \end{table}
 
 We observe a neat difference between simulated and emulated makespans for the
-burst and spaced workloads as expected: both times, the simulation finishes
+burst and spaced workloads as expected: the simulation does finish
 earlier than the emulation. The mean waiting times of the burst workload seem
 to follow this same principle as the simulated values are slightly lower than
 emulated ones, although it doesn't seem to be the case for the spaced workload.
 Indeed, the scheduler performed drastically better in the simulated scenario.
 We don't know the cause of this. As for the realistic workload, the simulated
 metrics correspond exactly to the ones measured in the emulated cluster. At
-first glance it seems that the waiting times do not correspond, however we
+first glance, it seems that the waiting times do not correspond, however we
 noticed during our experiments that the scheduler seemed to follow two
 differents scenarios for this workload leading to two different values of the
 mean waiting time.  This is especially obvious on figure
@@ -458,13 +458,13 @@ they are fairly close to each other and assume that the simulation was
 accurate. Running more experiments with the emulated realistic workload would
 give us better insights, unfortunately we did not have enough time on our
 hands. In that regard, we would have benefited from a realistic workload
-composed of more jobs and spanning over a shorter period of time. This is an
-overlooked part of our experimentations.
+composed of more jobs and spanning over a shorter period of time. This is then
+left for future work.
 
 \section{Discussion and future work}
 
-First, it is important to note some fundamental differences between grid
-computing and cluster computing, differences because of which we had to put
+First, it is important to note some fundamental differences between Grid
+Computing and Cluster Computing, differences because of which we had to put
 aside large components of SimGrid models. Parallel computing relies on the
 ability to schedule a task on multiple nodes.  The different processes
 communicate with each others thanks to protocols such as the \textit{Message
@@ -477,11 +477,14 @@ of SimGrid which is the simulation of parallel tasks and MPI applications
 (SimGrid has an entire module for the simulation of MPI applications named SMPI
 \cite{casanova:hal-01017319}).\\
 
-Batkube, as a simulator, has limited features, however it is functional and
-proved that it is possible to adapt any Kubernetes scheduler to Batsim. It
-supports delay jobs that can request resources such as cpu or memory. In its
-current state the API supports the default Kubernetes scheduler, which is  a
-very capable scheduler and is widely used in the industry. For now, it has several flows that need to be improved upon.
+Batkube, as a simulator, has limited features, however it is functional and the
+fact that we were able to patch kube-batch in addition to the default scheduler
+(it is mentioned in section \ref{sec:time-hijack}) proved that it is possible
+to adapt any Kubernetes scheduler to Batsim, given further development on the
+api. It supports delay jobs that can request resources such as cpu or memory.
+In its current state the API supports the default Kubernetes scheduler, which
+is  a very capable scheduler and is widely used in the industry. For now, it
+can be improved in some ways.
 
 The API of Batkube needs further development in order to correctly support
 other Kubernetes schedulers. Partial or wrong implementations of the endpoints
@@ -498,15 +501,18 @@ and the fact that we wait up to \textit{timeout value} every exchange. This is
 why we did not conduct any scalability experiment. This kind of experiment
 would require more time, but also more resources. Indeed, we observed that the
 Kubernetes scheduler require more memory on long running experiments and
-hindered our capacity of running long simulations. Also, it would simply not be
-relevant because scalability is not our objective here.\\
+hindered our capacity of running long simulations. Also, not much work was put
+into the scalability aspect of the simulator, because trying to improve its
+performances before in its current state would be premature
+optimisation\footnote{\url{http://wiki.c2.com/?RulesOfOptimization}}. This also is
+left for future work.
 
 Batkube simulation capabilities can be expanded on by implementing the rest of
 Batsim own capabilities. A single pod cannot be scheduled on several nodes but
 one node can still have a theoretically unlimited capacity in resources, and
 pods inside one same node can communicate with each others and work together to
 execute a parallel
-task\footnote{https://kubernetes.io/docs/concepts/workloads/controllers/job/}.
+task\footnote{\url{https://kubernetes.io/docs/concepts/workloads/controllers/job/}}.
 With a bit of tweaking in the API one could model simple parallel tasks. Batsim
 also supports energy models which could become a critical metric in the near
 future, considering the climate urgency. Storage resoures can be added as well

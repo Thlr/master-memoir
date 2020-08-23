@@ -53,7 +53,7 @@ schedulers or RJMS in order to validate their algorithms. Thus, they are
 strongly coupled together and are not usable with any other software. They are
 either shipped with the software itself or worst, they are never released and
 discarded at the end of the development process.  Moreover, still according to
-Poquer \cite{poquet:tel-01757245}, strong coupling may lead to unrealistic
+Poquet \cite{poquet:tel-01757245}, strong coupling may lead to unrealistic
 models because in that case the scheduler often has an instant access to all
 the information it requires about the system. This conflicts with the real
 world as schedulers may not have access to that much information on a system or
@@ -61,9 +61,9 @@ may suffer from latency, impacting the scheduling decisions.\\
 
 
 To try and assess these issues a team of researchers at the LIG developed
-Batsim\cite{dutot:hal-01333471} which is a general purpose infrastructure
+Batsim \cite{dutot:hal-01333471} which is a general purpose infrastructure
 simulator with separation of concerns in mind. Batsim is based on
-SimGrid\cite{casanova:hal-01017319} which is a framework for developing
+SimGrid \cite{casanova:hal-01017319} which is a framework for developing
 simulators for distributed computer systems. Simgrid is now a 20 years old
 framework, which accuracy and scalability were extensively tested over the
 years under complex networks, topologies and workloads. 
@@ -73,7 +73,7 @@ they support its communication protocol. It means that, while any scheduler can
 potentially be run on a Batsim simulation, they still have to be adapted to
 make them compatible. This master's project is dedicated on developing an
 interface between Batsim and
-Kubernetes\footnote{https://github.com/kubernetes/kubernetes/} schedulers to
+Kubernetes\footnote{\url{https://github.com/kubernetes/kubernetes/}} schedulers to
 run clusters simulations. Kubernetes is an open source container management
 software widely exploited in the industry for its ease of use and wide range of
 capabilities.  It has freed developers from the cumbersome task of setting up

@@ -1,7 +1,7 @@
 \section{Reproducing the experiments} \label{sec:reproduce-expes}
 
 All scripts can be found in the
-batkube-test\footnote{github.com/oar-team/batkube-test} repository, under the
+batkube-test\footnote{\url{https://www.github.com/oar-team/batkube-test}} repository, under the
 \texttt{scripts} repository. The exact commands used to run Batkube, the
 scheduler and Batsim are described in the shell scripts. Running an experiment
 on an emulated cluster can be done with
@@ -145,7 +145,7 @@ Kuberenetes exchanges.
 \subsubsection{Custom client-go}
 
 Most Kubernetes schedulers rely on
-client-go\footnote{https://github.com/kubernetes/client-go}, which is a Go
+client-go\footnote{\url{https://github.com/kubernetes/client-go}}, which is a Go
 client for the api-server. It is a library implementing various tools to help
 schedulers converse with the API. By altering this client and patching
 schedulers so they use our client instead, we can make it exchange with Batsim
@@ -164,7 +164,8 @@ represents thousands of lines of code and altering it to our needs would not be
 an easy feat.  The other drawback to this approach is that Batkube would only
 support schedulers written in Go and making use of client-go, although this
 should not be an issue as the only kubernetes scheduler we could find that does
-not rely on client-go is a toy scheduler written in bash \cite{bash-scheduler}.
+not rely on client-go is a toy scheduler written in
+bash\footnote{\url{https://github.com/rothgar/bashScheduler}}.
 
 \subsubsection{Partial reimplementation of the API}
 

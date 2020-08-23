@@ -11,7 +11,15 @@
 \usepackage [includehead, margin=1.5cm]{geometry}                % See geometry.pdf to learn the layout options. There are lots.
 \usepackage{graphicx} % include images
 \usepackage{wrapfig} % wrap text around figures
-\usepackage{hyperref} % urls, hyperlinks, etc
+\usepackage[hidelinks]{hyperref} % urls, hyperlinks, etc
+\usepackage{xcolor}
+\hypersetup{
+    colorlinks,
+    linkcolor={red!50!black},
+    citecolor={blue!70!black},
+    urlcolor={blue!80!black}
+}
+%\usepackage[dvipsnames]{xcolor}
 % \usepackage{pdfpages} % include pdf pages
 \usepackage{enumitem} % customize itemize
 \usepackage[backend=bibtex]{biblatex} % bibliography
@@ -19,7 +27,7 @@
 % \usepackage{titlesec} % Modify chapter headings
 % \usepackage{wrapfig} % wrap text around figures
 % \usepackage{float} % force figure positions at the end of the file
-\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\usepackage[linesnumbered, boxed, lined]{algorithm2e}
 
 % Packages from uga template
 %\usepackage{fullpage}

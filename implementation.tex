@@ -7,20 +7,19 @@ around a central API. Everything is asynchronous as the API can be
 accessed anytime by any component.
 
 The question that arises is, can we adapt Batsim to make it support Kubernetes
-schedulers? Is it possible to implement an adaptive layer between a synchronous
+schedulers ? Is it possible to implement an adaptive layer between a synchronous
 event based simulator like Batsim and a scheduler implemented following the
-asynchronous paradigms of APIs? To answer these issues we developed
-Batkube\footnote{github.com/oar-team/batkube}, which is an adaptive interface
+asynchronous paradigms of APIs ? To answer these issues we developed
+Batkube\footnote{\url{https://www.github.com/oar-team/batkube}}, which is an adaptive interface
 to Batsim for Kubernetes schedulers.
 
-It will follow that in order to do so, we re-implemented an API following
-Kubernetes specifications and intercepted the scheduler's time to synchronize
-it with the simulation time. This allows us to simulate lengthy workloads in a
-short period using a scheduler otherwise supposed to rely on ``real'' machine
-time. We first describe some technical concepts about Kubernetes and Batsim,
-and then describe how we re-implemented the API, intercepted the time, and
-handled the synchronization of the different times between Batsim and the
-scheduler.
+In order to build this interfaca, we re-implemented an API following Kubernetes
+specifications and intercepted the scheduler's time to synchronize it with the
+simulation time. This allows us to simulate lengthy workloads in a short period
+using a scheduler otherwise supposed to rely on ``real'' machine time. We first
+describe some technical concepts about Kubernetes and Batsim, and then describe
+how we re-implemented the API, intercepted the time, and handled the
+synchronization of the different times between Batsim and the scheduler.
 
 \section{Batsim concepts}
 
@@ -33,11 +32,11 @@ occuring during the simulation.
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.5]{imgs/batsim-sequence-diag.png}
-	\captionsource{Exchanges between Batsim and the scheduler.}{https://batsim.readthedocs.io/en/latest/protocol.html}
+\captionsource{Exchanges between Batsim and the scheduler.}{\url{https://batsim.readthedocs.io/en/latest/protocol.html}}
 	\label{fig:bati-seq-diag}
 \end{figure}
 
-A Batsim platform is a SimGrid platform, defined in the xml format. A node can
+A Batsim platform is a SimGrid platform, defined in the XML format. A node can
 endorse the role of \textit{master}, \textit{compute\_resource} or
 \textit{storage}. Here we only consider master nodes which host the decision
 process, and compute resources to which we add our custom resource capacities.
@@ -47,10 +46,10 @@ unknown reasons at the time this report is written.} which is the amount of cpu
 the node has and \textit{memory} which is memory capacity of the node. Of
 course, storage resources can be taken into account in future development of
 Batkube. Also, we do not consider the links between the nodes for now because
-we do not support parallel jobs. Finally, Batsim proposes an energy model that
-we decided to ignore as well.\\
+we do not support parallel jobs. Finally, Batsim proposes an energy model, but
+it is not under the scope of this study.
 
-Batsim takes one or several workload as inputs, which are json files containing
+Batsim takes one or several workload as inputs, which are JSON files containing
 jobs definitions. Figure \ref{fig:bat_wl_ex} gives an example of such workload.
 The jobs are defined with the following inputs.  First, they are identified by
 an \textit{id} which is unique within each workload and are submitted at a time
@@ -59,15 +58,15 @@ of resources each job requires, although we don't use this field because we
 can't specify \textit{which} resource we require. Instead we pass resource
 requests as optional parameters. We support the additional fields \textit{cpu}
 which has a minimum value of 100m cpu just like Kubernetes cpu
-requests\footnote{https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/}
+requests\footnote{\url{https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/}}
 and \textit{memory} which also complies with Kubernetes compute resource
 definitions.  Jobs follow a certain \textit{profile} that defines the nature of
 the job.  These profile may be as simplistic as \textit{delay} profile which
 makes the resource wait for a given amount of time, or describe parallel tasks
 using matrices to describe the amount of exchanges between the allocated nodes.
-For now we only consider delays to simplify the implementation of the
+For now, we only consider delays to simplify the implementation of the
 simulator. Also, because Kubernetes allows the use of multiple
-schedulers\footnote{https://kubernetes.io/docs/tasks/extend-kubernetes/configure-multiple-schedulers/},
+schedulers\footnote{\url{https://kubernetes.io/docs/tasks/extend-kubernetes/configure-multiple-schedulers/}},
 we support the field \textit{scheduler} which contains the name of the
 scheduler the job should be scheduled with.\\
 
@@ -79,29 +78,28 @@ depicts a standard message sent from the scheduler to Batsim.  Batkube features
 are limited because we focused on building a working proof of concept rather
 than a fully fledged Kubernetes simulator which is why only consider a subset
 of these messages. We provide a list of supported events and their description
-in the section \ref{batmsg} of the appendix. More information on Batsim's
-protocol is available on Batsim
-documentation\footnote{https://batsim.readthedocs.io/en/latest/protocol.html},
+in the section \ref{sec:batmsg-list} of the appendix. More information on
+Batsim's protocol is available on Batsim
+documentation\footnote{\url{https://batsim.readthedocs.io/en/latest/protocol.html}},
 and a list of the events handled by Batkube can be found in section
 \ref{sec:batmsg-list}, with examples of some Batsim messages.
 
-Batsim's output takes the form of a csv file containg information about the
+Batsim's output takes the form of a CSV file containg information about the
 jobs executions. Mainly we take interest in their submission time, execution
 time and waiting time. Again, a detailed list of Batsim outputs can be found on
 the
-documentation\footnote{https://batsim.readthedocs.io/en/latest/output-jobs.html}.
+documentation\footnote{\url{https://batsim.readthedocs.io/en/latest/output-jobs.html}}.
 During our experimentations with Batkube we interest ourselves in two metrics
 that can be computed from this output:
 \begin{itemize}
 	\item The \textit{makespan}, which is the total length of the
 		simulation. It is defined as the timestamp at which the last
 		job finishes executing, minus the origin (in this case, zero).
-	\item The \textit{mean\_waiting\_time}, which is the mean time the jobs
-		spent waiting for a scheduling decision. The waiting time is
-		defined by the duration between the submission time and the
-		starting time (here the starting time is equivalent to the time
-		at which the job was scheduled. We will see later that these
-		two times do not correspond in Kubernetes.)
+	\item The \textit{mean\_waiting\_time}, which is defined by the
+		duration between the submission time and the starting time
+		(here the starting time is equivalent to the time at which the
+		job was scheduled. We will see later that these two times do
+	not correspond in Kubernetes.)
 \end{itemize}
 
 These metrics were chosen because in our case, they are representative of the
@@ -122,11 +120,11 @@ and the components that make up Kubernetes.
 \begin{figure}[h]
 	\centering
 	\includegraphics[scale=0.5]{./imgs/node-overview.png}
-	\captionsource{Node overview}{https://kubernetes.io/docs/tutorials/kubernetes-basics/explore/explore-intro/}
+	\captionsource{Node overview}{\url{https://kubernetes.io/docs/tutorials/kubernetes-basics/explore/explore-intro/}}
 	\label{fig:node-overview}
 \end{figure}
 
-The basic processing unit of Kubernetes is called a \textbf{pod} which is
+The basic processing unit of Kubernetes is called a \textit{Pod} which is
 composed of one or several containers and volumes\footnote{Because of their
 	transient nature, containers can not store data on their own. A volume
 	is some storage space on the host machine that can be linked to
@@ -135,47 +133,46 @@ type of application they contain vary depending on the context: in a web
 platform context a pod most often hosts a service or micro-service that must be
 available at all times, in opposition to a batch processing context where it
 runs an application that is to be executed in a finite amount of time.  Pods
-are bundled together in \textbf{nodes} (figure \ref{fig:node-overview}) which
+are bundled together in \textit{Nodes} (figure \ref{fig:node-overview}) which
 are either physical or virtual machines. They represent another barrier to pass
 through to access the outside world which bundles pods under the same network
 to facilitate communication between them, and enables the use of proxies to
-access the underlying services. A set of nodes is called a \textbf{cluster}
+access the underlying services. A set of nodes is called a \textit{cluster}
 which is the highest abstraction layer in Kubernetes.
 
 Nodes take the idea of containerization further than plain containers by
-encapsulating the already encapsulated services.  Each node runs at least one
-pod, the \textbf{kubelet}, which is a process responsible for communicating
+encapsulating the already encapsulated services.  In each node runs one \textit{kubelet}, which is a process responsible for communicating
 with the rest of Kubernetes. More precisely, the kubelet communicates with the
-\textbf{kube-api-server} which is responsible for the whole cluster. We refer
+\texttt{kube-api-server} which is responsible for the whole cluster. We refer
 to this API as the api-server, as it is called within the Kubernetes community.
-This API server, as well as the other components of the \textbf{Control Plane}
+This API server, as well as the other components of the \textit{Control Plane}
 (figure \ref{fig:kube-components}), can be run on any machine but for
 simplicity they are set up on the same machine at start up. This machine is
-often called the \textbf{master} node and typically does not run any other
+often called the \textit{master} node and typically does not run any other
 container.
 
 As stated before Kubernetes revolves around its API server which is its central
 component. All operations between components go through this REST API. These
 operations take various forms like user interactions through the commande line
-interface \textbf{kubectl}, scheduling operations or management of cluster data
-on \textbf{etcd}. Kubernetes schedulers can communicate with the api-server in
+interface \texttt{kubectl}, scheduling operations or management of cluster data
+on \texttt{etcd}. Kubernetes schedulers can communicate with the api-server in
 various protocols. These can be text based like json messages or binary with
 the use of Google's protocol buffers. To help with building schedulers,
 Kubernetes has developed several
-clients\footnote{https://kubernetes.io/docs/reference/using-api/client-libraries/}
+clients\footnote{\url{https://kubernetes.io/docs/reference/using-api/client-libraries/}}
 to facilitate communication with the API. 
 
 The most notable Kubernetes scheduler is the
-\texttt{kube-scheduler}\footnote{https://github.com/kubernetes/kube-scheduler}
+\texttt{kube-scheduler}\footnote{\url{https://github.com/kubernetes/kube-scheduler}}
 which is the default and also most commonly used sheduler.
-\texttt{kube-batch}\footnote{https://github.com/kubernetes-sigs/kube-batch} is
+\texttt{kube-batch} is
 a project aimed at developing batch scheduling in Kubernetes, which is already
 used by several projects. One of those projects is
-Volcano\footnote{https://github.com/volcano-sh/volcano} already used in some
+Volcano\footnote{\url{https://github.com/volcano-sh/volcano}} already used in some
 platforms for computational and data intensive domains such as deep learning or
 genome sequencing in Kubernetes. Yet another important scheduler is Poseidon
-\footnote{https://github.com/kubernetes-sigs/poseidon} which is rather an
-adaptive layer to Firmament. All those schedulers make use of the Go client to
+\footnote{\url{https://github.com/kubernetes-sigs/poseidon}} which is rather an
+adaptive layer to Firmament \cite{199390}. All those schedulers make use of the Go client to
 communicate with the api-server.
 
 We then decided to re-build the API in order to simulate any
@@ -184,7 +181,7 @@ cluster to any Kubernetes scheduler.
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=\textwidth]{./imgs/components-of-kubernetes.png}
-	\captionsource{Components of Kubernetes}{https://kubernetes.io/docs/concepts/overview/components/}
+	\captionsource{Components of Kubernetes}{\url{https://kubernetes.io/docs/concepts/overview/components/}}
 	\label{fig:kube-components}
 \end{figure}
 
@@ -211,7 +208,7 @@ complete control over the source code. The technically challenging aspect here
 is Kubernetes resource management. Indeed, we need to provide the scheduler
 with expected informations about the cluster state if we want to obtain a
 correct behavior from it, and while the endpoints of the API are well
-documented, Kubernetes team did not write lengths about how resources are
+documented, Kubernetes team did not write extensively about how resources are
 managed internally. In order to save us the hassle of writing the entire code
 of the server, we used tools to generate the code from the api-server
 specification as described in section \ref{sec:api}.
@@ -219,20 +216,20 @@ specification as described in section \ref{sec:api}.
 \subsection{Architecture of Batkube}
 
 Figure \ref{fig:batkube-architecture} depicts the architecture of Batkube,
-which is written in Go.  The central component is the \textbf{broker}. It
+which is written in Go.  The central component is the \texttt{broker}. It
 handles the messages coming from Batsim and the scheduler while ensuring time
 synchronization between them. It is responsible for translating and forwarding
 messages between Batsim and the scheduler and orchestrates the synchronization
-between the two parties.  \textbf{batsky-go} intercepts the calls to Go
-\textit{time} library to ensure the scheduler's time is based on the simulation
+between the two parties.  \texttt{batsky-go} intercepts the calls to Go
+\texttt{time} library to ensure the scheduler's time is based on the simulation
 time instead of machine time. Time requests are forwarded to Batkube which
 replies with the current simulation time.  The complete process to ``hijack''
-scheduler time is explained in section \ref{sec:time-hijack}. The \textbf{rest
+scheduler time is explained in section \ref{sec:time-hijack}. The \textit{rest
 api} is the reimplementation of the Kubernetes api-server. It ensures the
 scheduler gets all the necessary information on the cluster state to make its
 scheduling decisions, and it is also the receiver of those decisions. Section
 \ref{sec:api} explains how we built this API and a tool to automatically
-generate its code from the api-server specification.  \textbf{translate} is a
+generate its code from the api-server specification.  \texttt{translate} is a
 utility package providing functions to translate Kubernetes resources to Batsim
 messages, and \textit{vice versa}.
 
@@ -246,16 +243,16 @@ messages, and \textit{vice versa}.
 \section{Building the API} \label{sec:api}
 
 The API of Kubernetes follows the
-OpenAPI\footnote{https://www.openapis.org/about} 2 specification which is a
+OpenAPI\footnote{\url{https://www.openapis.org/about}} 2 specification which is a
 standard for describing APIs. Luckily tools exist to generate such
 specification from source code, but also to generate code from a specification.
 Since the Kubernetes API specification is available on their
-reposotory\footnote{https://github.com/kubernetes/kubernetes/blob/release-1.18/api/openapi-spec/swagger.json},
+reposotory\footnote{\url{https://github.com/kubernetes/kubernetes/blob/release-1.18/api/openapi-spec/swagger.json}},
 we were able to use such tools. This allowed us not to implement boiler plate
 code by hand and fill the gaps where they needed to be filled, leaving empty
 the endpoints we do not need. These endpoints can be dealt with later for
 future development of the simulator. For this project we used
-go-swagger\footnote{https://github.com/go-swagger/go-swagger/tree/master/examples/stream-server}
+go-swagger\footnote{\url{https://github.com/go-swagger/go-swagger/tree/master/examples/stream-server}}
 to generate our code and the API specification corresponds to the release 1.18
 of Kubernetes. One downside of this method is that go-swagger forbids to tamper
 with the code of the server itself, although we did not need to during this
@@ -280,21 +277,22 @@ then need to intercept all calls to machine time to redirect them to the
 simulator.
 
 This has been done already with the
-OAR\footnote{https://github.com/oar-team/oar3} scheduler which was isolated and
+OAR\footnote{\url{https://github.com/oar-team/oar3}} scheduler which was isolated and
 adapted to Batsim using a script written in
-python\footnote{https://github.com/oar-team/oar3/blob/master/oar/kao/bataar.py}.
+python\footnote{\url{https://github.com/oar-team/oar3/blob/master/oar/kao/bataar.py}}.
 In order to ensure synchronization of the time between the scheduler and
-Batsim, a c library called batsky\footnote{https://github.com/oar-team/batsky}
-was developed. Once compiled with this library, all calls from the scheduler to
-get machine time are redirected to the simulator.
+Batsim, a library called batsky\footnote{\url{https://github.com/oar-team/batsky}}
+was developed in the C programming language. Once compiled with this library,
+all calls from the scheduler to get machine time are redirected to the
+simulator.
 
 Unfortunately, we were not able to recompile Go using a custom C library, which
-would have redirected every call to machine time to Batkube. Insted, we
+would have redirected every call to machine time to Batkube. Instead, we
 reimplemented parts of the Go \textit{time} library and patched the
 kube-scheduler with it (figure \ref{fig:patch-time}) to redirect the calls to
 machine time.  This tool was also tested against the kube-batch scheduler which
 received the patch without any issues, but that we couldn't use with the
-simulator because it implied more development on the batkube api to support it.
+simulator because it implied more development on the batkube API to support it.
 
 \begin{figure}[]
 	\centering
@@ -306,7 +304,7 @@ simulator because it implied more development on the batkube api to support it.
 \subsection{Redirection of time requests to Batkube}
 
 The module in charge of this time redirection is called
-\textbf{batsky-go}\footnote{https://github.com/oar-team/batsky-go}, which re
+\texttt{batsky-go}\footnote{\url{https://github.com/oar-team/batsky-go}}, which re
 implements \texttt{time.Now()} as well as timers and tickers. Timers are
 structures that are instantiated with a duration as input, that notify the
 caller once this duration is elapsed. Timers can be reset, modified or deleted
@@ -317,14 +315,14 @@ of exiting after they fire like timers would.
 
 In order to explain batsky-go algorithms as clearly as possible we need to
 provide some context about Go channels. Go allows the user to run multi
-threaded code easily thanks to its \textbf{go routines}. These routines allow
+threaded code easily thanks to its \textit{go routines}. These routines allow
 the user to run code in parallel whithout requiring any setup by simply calling
 \texttt{go func()} where \texttt{func()} is a function.  It creates a new
 thread and launches the given code in parallel with the encapsulating function.
 Essentially, this creates a child process.  Go \textit{channels} are
 \textit{``a typed conduit through which you can send and receive values with
-the channel operator, <-''}\footnote{source:
-https://tour.golang.org/concurrency/2}
+the channel operator, <-''}\footnote{
+\url{https://tour.golang.org/concurrency/2}}
 
 \begin{figure}[]
 	\begin{minted}{go}
@@ -362,6 +360,7 @@ resMap[id] = res \tcc{A channel is associated with each request}
 req $<$- id \tcc{The code blocks here until request is handled}
 now = $<$-res \tcc{The code blocks here until response is sent by the requester loop}
 return now\;
+
 \caption{Time request (time.now())}
 \label{alg:now}
 \end{algorithm}
@@ -432,7 +431,7 @@ scheduler, batsky-go and Batkube.
 We have developed a tool for patching the schedulers, so they use our library
 instead of the standard \texttt{time} library. This tool is called
 \texttt{batsky-go-installer} and is available on github alongside
-Batkube\footnote{github.com/oar-team/batsky-go-installer}.
+Batkube\footnote{\url{https://www.github.com/oar-team/batsky-go-installer}}.
 
 Our approach replaces all calls to the functions of the \texttt{time} library
 while leaving the objects as is to ensure compatibility. In that regard, our
@@ -457,9 +456,7 @@ need to listen to the scheduler as much as we can, but while we do so the
 simulation advances slowly. In fact, whenever we listen to the scheduler and
 wait for a decision we synchronize machine time and simulation time so the
 scheduler gets a time that advances as it would if it was not simulated. This
-ensures that the internals of the scheduler function correctly. We could speed
-up this time to increase simulation speed and study the effect it has on the
-scheduler, but we have to leave this for future work unfortunately. During that
+ensures that the internals of the scheduler function correctly. During that
 time Batsim is blocked and waits for a message from the decision process. When
 we give back priority to Batsim time stops advancing on the scheduler side,
 effectively suspending the decision process. At this time Batsim advances
