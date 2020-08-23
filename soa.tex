@@ -18,14 +18,14 @@ different scheduling policies affect my application? Would my batch jobs
 compute faster with a different topology? To answer these interrogations one
 must conduct studies to experiment with different configurations.\\
 
-Studying an entire computing infrastructure is not an easy feat, first because
+Studying an entire computing infrastructure is not an easy task, first because
 every infrastructure is unique. There are as many types of infrastructure as
 there are use cases, each having a different vision on efficiency and what
 metrics are critical to the system: latency, bandwith, resource availability,
 computational power or cost effectiveness (which boils down to energy
 efficiency). This variety of purposes translates to the type of hardware used
 and the topology of the infrastructure. Some systems are centralized like HPC
-and Data Centers, others are meant to be used from a distance like Cloud
+and Data Centers, others are meant to be provide on demand resources like Cloud
 Computing infrastructures and others are decentralized like Grid Computing,
 Volunteer Computing and Peer to Peer computing. There are as many systems as
 there are objectives to be achieved.
@@ -60,10 +60,10 @@ Experiments conducted on real systems may prove difficult to reproduce, as one
 must have access to the same system in the first place. Event in the
 eventuality where access to the exact same system would be possible, changes in
 the infrastructure and software environment over time would diminish even more
-the chances of recreating a sane environment. Moreover, studying new algorithms
-imply testing them under a wide range of systems (under different system size,
-topology, and hardware) which is impossible to do with a real computer as we
-can not change the hardware of those infrastructures.
+the chances of recreating the same environment. Moreover, studying new
+algorithms imply testing them under a wide range of systems (under different
+system size, topology, and hardware) which is impossible to do with a real
+computer as we can not change the hardware of those infrastructures.
 
 One solution to these issues is running \textit{in vitro} studies, that is to
 say run an emulation of the system. With this approach the system is reproduced
@@ -89,7 +89,7 @@ would otherwise not be possible in the real world. One can think of simulations
 of the universe, prediction models for the weather or modeling some microbiome
 in biology. Computing itself makes no exception and researcher have created
 models of computer systems in order to experiment with new scheduling policies,
-network topologies or planning for systems capacity, for example. Simulation
+network topologies or planning for systems capacity. Simulation
 dramatically reduces experimentation cost and allows for reproducibility.
 Workloads on supercomputers may span weeks or months, whereas a single standard
 laptop can simulate this same workload in a matter of seconds or hours,
@@ -173,14 +173,14 @@ systems simulators and is written in C. It uses simple analytical models for
 all its resources to ensure high scalability, and also because those models
 proved accurate. For instance, a task execution time boils down to a compute
 cost divided by the compute speed of the resource it is allocated to. Just like
-CPU which are not modeled at the cpu cycle level, network transfers and disks
-are not modeled at packet level and block level either.  It was developed --
-and improved -- with versatility in mind, which according to its makers was the
-key to its excellent performance both in accuracy and scalability. This
-\textit{versatility} is not to be confused with \textit{genericity}: their
-models provide some amount of genericity so that they can be improved for
-specific tasks, but they are versatile enough to cover various of domains, each
-accurately. 
+CPU which are not modeled at cycle-level, network transfers use a flow-level
+model and storage is caracterized by a capacity, a service rate and a latency.
+It was developed -- and improved -- with versatility in mind, which according
+to its makers was the key to its excellent performance both in accuracy and
+scalability. This \textit{versatility} is not to be confused with
+\textit{genericity}: their models provide some amount of genericity so that
+they can be improved for specific tasks, but they are versatile enough to cover
+various of domains, each accurately. 
 
 Projects based on SimGrid span accross a wide range of domains within
 distributed systems. WRENCH \cite{wrench} is a \textit{Workflow Management
@@ -195,16 +195,15 @@ based upon, which is a RJMS simulator, relies on SimGrid. All these projects
 prove the ability of SimGrid to perform in very different contexts, and SimGrid
 models are known for their validity and scalability.\\
 
-GridSim \cite{gridsim} is another library for development of grid computing
-simulators. Contrary to SimGrid it is coded in Java and it is therefore cross
-platform. GridSim has a broader view on what a grid is: when SimGrid models
+GridSim \cite{gridsim} is another library for the development of grid computing
+simulators. GridSim has a broader view on what a grid is: when SimGrid models
 wired networks and therefore only allows for specifications of localized
 resources, GridSim allows resources to be specified in any time zone. GridSim
 also support resources in \textit{time-shared} or \textit{space-shared} mode
 while SimGrid only models time shared resources. Modeling space shared
 resources allows GridSim to simulate multiple users competing to submit jobs
-simultaneously on the same resources, which is a feature that would require
-extending SimGrid models.
+simultaneously on the same resources, which is a feature that has to  be
+implemented on top of the SimGrid framework. 
 
 Eventhough GridSim is very popular in its domain, its models are not as valid
 as SimGrid models. According to SimGrid's team a simple inspection of GridSim's
@@ -246,11 +245,11 @@ scheduler. Scheduling is also called batch scheduling or batch processing, as
 schedulers allocate batches of jobs at a time. Jobs are allocated on machines,
 virtual or physical, with the intent of minimizing the total execution time,
 equally distributing resources, minimizing wait time for the user or reducing
-energy costs. As these objectives often contradict themselves so schedulers
+energy costs. As these objectives often contradict themselves, schedulers
 have to implement compromises or focus on what the user requires from the
 system.
 
-The scheduler has many factors to keep in mind while trying to be as efficient
+The sceduler has many factors to compose with while trying to be as efficient
 as possible, such as:
 
 \begin{itemize}
@@ -274,7 +273,7 @@ schedulers.
 
 \section{Batsim}
 
-Batsim\cite{dutot:hal-01333471} is a distributed system simulator built upon
+Batsim\cite{dutot:hal-01333471} is a infrastructure simulator built upon
 the SimGrid framework. Its main objective is to enable the study of RJMS
 without the need to implement a custom simulator, by decoupling the decision
 process from the simulator itself.\\
@@ -285,22 +284,22 @@ decision process.  Unlike other HPC or grid computing simulations that run on
 existing application traces, Batsim takes a user defined workload as an input.
 This allows the user to fine tune workloads in order to study very specific
 issues and achieve different level of realism. In addition, it provides tools
-to translate workloads between its own format and the swf format, which is a
-commonly used structure for HPC workloads.
+to translate workloads between its own format and the
+SWF\footnote{https://www.cs.huji.ac.il/labs/parallel/workload/swf.html} format,
+which is a commonly used structure for HPC workloads.
 
-Batsim, just like SimGrid, aims at being versatile. 
-Batsim computation platforms are
-SimGrid platforms meaning that theoretically, they may be as broad as SimGrid
-allows it. In reality any SimGrid platform is not a correct Batsim platform.
-Because Batsim aims at studying RJMS software, it requires a \textbf{master}
-node that will host the decision process. The other hosts (or computational
-resources) will have either the roles of \textbf{compute\_node} or
-\textbf{storage}. Still, the user may study any topology he wishes using
-SimGrid models.
+Batsim, just like SimGrid, aims at being versatile.  Batsim computation
+platforms are SimGrid platforms meaning that theoretically, they may be as
+broad as SimGrid allows it. In reality any SimGrid platform is not a correct
+Batsim platform.  Because Batsim aims at studying RJMS software, it requires a
+\textbf{master} node that will host the decision process. The other hosts (or
+computational resources) will have either the roles of storage or compute
+resources on which the tasks are run. Still, the user may study any topology he
+wishes using SimGrid models.
 
 Thanks to its own message interface Batsim is language agnostic which means
 that any RJMS can be plugged into it as long as it implements the interface.
-This property allows us to plug any scheduler we wish to Batsim, including
+This property allows us to plug any scheduler to Batsim, including
 Kubernetes schedulers, which allowed us to effectively run simulations of
 Kubernetes clusters.
 
@@ -313,7 +312,7 @@ maintainability or scalability. In an attempt to automate this process
 developers started using virtual machines which enabled them to run their
 services regardless of physical infrastructure while having a better control
 over resource allocation.  This led to the concept of containers which takes
-the idea of encapsulated applications further than plain virtual machines
+the idea of encapsulated applications further than fully virtualized machines
 (Figure \ref{fig:container-evolution}).
 
 \begin{figure}[h]
@@ -350,20 +349,22 @@ speak of these containerized and modular applications as cloud native computing
 
 Kubernetes\footnote{\url{https://kubernetes.io/}} is the implementation of this
 general idea and was announced at the same time as the CNCF. It aims at
-automating the administration of a fleet of containers. Deployment and scaling
-(that is to say, replication of one same application to increase its
-availability) is described in yaml files and managed by Kubernetes.  It is
-industry grade and is now the de-facto solution for container orchestration.
+automating the administration of a fleet of containers. This system is mostly
+description based but still provides a command-line interface to interact with
+the resources live. It is industry grade and is now the standard solution for
+container orchestration.
 
 \subsection{HPC and Kubernetes}
 
-In this work we use Kubernetes schedulers as batch schedulers because batch
-scheduling is our domain of origin (Batsim was developed in close relation with
-	the teams behind the grid computing simulator
-	SimGrid\cite{casanova:hal-01017319} and the resource manager OAR
-\cite{oar}), and because it is convenient for us to test our approach with HPC
-workloads. However, even though Kubernetes does have means to handle such
-workloads like batch schedulers \cite{kube-batch} and a special type of
+In this work we use Kubernetes schedulers as batch schedulers because Ryax
+makes use of workflow workloads which are closer to batch workloads than
+service based workloads. Also, batch scheduling is our domain of origin (Batsim
+	was developed in close relation with the teams behind the grid
+computing simulator SimGrid\cite{casanova:hal-01017319} and the resource
+manager OAR \cite{oar}), and because it is convenient for us to test our
+approach with HPC workloads.  However, even though Kubernetes does have means
+to handle such workloads like batch schedulers \cite{kube-batch} and a special
+type of
 resource\footnote{https://kubernetes.io/docs/concepts/workloads/controllers/job/},
 these two fields differ fundamentally because of the nature of the issues they
 tackle. We do not intend to evaluate scheduler performance but rather prove
@@ -392,7 +393,7 @@ which brought an increasing interest for container driven HPC aswell and
 Kubernetes for HPC in particular. Batch schedulers such as
 kube-batch\footnote{\url{https://github.com/kubernetes-sigs/kube-batch}} have
 been implemented for kube, and numerous HPC applications like
-slurm\footnote{\url{https://slurm.schedmd.com/containers.html}} now support containers as well.
+SLURM\footnote{\url{https://slurm.schedmd.com/containers.html}} now support containers as well.
 
 Indeed, containers have many advantages from which HPC users could benefit
 from.
@@ -416,9 +417,9 @@ from.
 
 Despite all those advantages, Kubernetes is not ready yet to be used in proper
 HPC environment because it lacks vital components like a proper batch job
-queuing system and support for MPI applications. It cannot yet compete against
-the very well established HPC ecosystem, but that time may come soon as
-containers are becoming more and more integrated in modern infrastructures.
+queuing system and support for MPI applications. Also, containers are not a
+good fit for HPC because most of the isolation given by containers has to be
+bypassed \cite{mercier:tel-02284996}. Still, containers are becoming more and more integrated in modern infrastructures.
 
 \section{Related work}
 
