@@ -33,9 +33,9 @@
 \usepackage{multirow}
 %
 \usepackage{minted}
-
 \usepackage{subcaption}
 \captionsetup{compatibility=false}
+\usepackage{svg}
 % \usepackage{appendix}
 % \usetikzlibrary{arrows,shapes,positioning,shadows,trees}
 % \makesavenoteenv{tabular}
@@ -138,46 +138,31 @@ Vania Marangozova-Martin\\
 \renewcommand{\abstracttextfont}{\normalfont}
 \abstractintoc
 \begin{abstract} 
-	Containers, which are lightweight virtual machines sharing the same
-	kernel as their host machine, have given developers much more control
-	over their resources than they had before when there was no
-	intermediate between the application and the physical servers.
-	Eventually, developers realized they could go even further by
-	automating container management operations and in this context we
-	witnessed the rise of container orchestration software. Kubernetes is
-	one such software and arguably the most popular container orchestrator
-	on the market.  However, while Kubernetes has become a standard, many
-	fundamental questions remain. One such issue is the problem of
-	scheduling, which in computer science is the action of allocating tasks
-	submitted by users on available resources.  In order to properly
-	evaluate and develop schedulers, researchers use simulators to model
-	complex networks and computing infrastructures accurately in a short
-	amount of time. Indeed, the cost of running experiments on real systems
-	will never be justified by the improvements these experiments would
-	enable.  While the default Kubernetes scheduler works well for most of
-	the \textit{Cloud Native} infrastructures, researchers would rather
-	experiment with different batch processing policies on Kubernetes
-	clusters.  Our goal in this master thesis is to describe Batkube, an
-	open source software enabling the study of Kubernetes schedulers by
-	simulating Kubernetes clusters. Batkube is based on Batsim, which is
-	itself a general purpose distributed system simulator focused on the
-	study of \textit{Resource and Jobs Management Systems (RJMS)} and built
-	on the popular SimGrid framework, enabling scalable and accurate
-	simulations of grid systems. During this work we implemented a custom
-	Kubernetes API to form an adaptive layer between Batsim and the
-	schedulers in order to run simulations as if the scheduler was running
-	on a real system. Time synchronization between the simulator and the
-	scheduler being key to the simulation, we developed a tool to patch any
-	scheduler written in the Go programming language allowing us to
-	intercept their time and synchronize it with the scheduler. Using these
-	tools we were able to run simulations of Kubernetes clusters and
-	conduct a study on the time synchronization parameters. Our API
-	currently supports the default Kubernetes scheduler and is only able to
-	run simple scenarios, but it offers great perspective for future
-	development to improve it into a fully fledged Kubernetes cluster
-	simulator.
-\end{abstract}
-\abstractintoc
+	The container technology has greatly simplified the deployment of new
+	web applications thanks to container orchestration software. Kubernetes
+	is one such software and arguably the most popular container
+	orchestrator. It has become a standard and yet many fundamental
+	questions remain, one of which is the problem of scheduling. Studying
+	this problem requires the use of simulators, because the cost of
+	running experiments on real systems is not justified by the
+	improvements these experiments would enable. To answer this need we
+	have developed Batkube, an open source software which goal is the study
+	of Kubernetes schedulers by simulating Kubernetes clusters.  Batkube is
+	based on Batsim, which itself is a general purpose distributed system
+	simulator focused on the study of \textit{Resource and Jobs Management
+	Systems (RJMS)} and built on the popular SimGrid framework, enabling
+	scalable and accurate simulations of grid systems.  During this work we
+	implemented a custom Kubernetes API to build an adaptive layer between
+	Batsim and Kubernetes schedulers. Also, time synchronization between
+	the simulator and the scheduler is key to the simulation. We developed
+	a tool to patch any scheduler written in the Go programming language
+	allowing us to intercept their time and synchronize it with the
+	scheduler. Using these tools we were able to run simulations of
+	Kubernetes clusters and conduct a study on this time synchronization.
+	Our API currently supports the default Kubernetes scheduler and is only
+	able to run simple scenarios, but it offers great perspective for
+	future development to improve it into a fully fledged Kubernetes
+cluster simulator.  \end{abstract} \abstractintoc
 
 \renewcommand\abstractname{Acknowledgements}
 \begin{abstract} 
@@ -199,6 +184,39 @@ Vania Marangozova-Martin\\
 	by the covid pandemic. The regular meetings we had and their positive
 	feedback were essential to me under this very particular context.
 \end{abstract}
+
+\renewcommand\abstractname{R\'esum\'e}
+\begin{abstract} \selectlanguage{french}
+	La technologie des containers a grandement aidé le déploiement de
+	nouvelles applications web grâce aux logiciels d'orchestration de
+	containers.  Kubernetes est l'un de ces logiciels, et sans doute le
+	plus populaire d'entre eux. Bien qu'il soit devenu une norme, de
+	nombreuses questions fondamentales demeurent dont le problème de
+	l'ordonnancement des tâches sur les ressources disponibles. L'étude de
+	ce problème nécessite l'utilisation de simulateurs, car le coût de ces
+	études si elles étaient menées sur de vrais systèmes ne serait pas
+	justifié par les améliorations qu'elles apporteraient. Pour répondre à
+	ce besoin nous avons développé Batkube, un logiciel open source dont le
+	but est l'étude des ordonnanceurs Kubernetes par la simulation de
+	clusters Kubernetes. Batkube est basé sur Batsim, qui est lui même un
+	simulateur de système distribué axé sur l'étude d'ordonnanceurs et
+	construit sur SimGrid, un framework populaire pour le développement de
+	simulateurs à la fois précis et efficaces. Au cours de ce travail nous
+	avons implémenté une API Kubernetes personnalisée représentant une
+	couche adaptative entre les ordonnanceurs Kubernetes et Batsim. Aussi,
+	la synchronisation du temps entre le simulateur et l'ordonnanceur est
+	un élément clé de la simulation. Nous avons donc développé un outil
+	pour intercepter le temps de n'importe quel ordonnanceur écrit dans le
+	langage de programmation Go et le synchroniser avec celui de la
+	simulation. Grâce à ces outils nous avons pu simuler des exécutions
+	d'applications sur des cluster Kubernetes, nous permettant d'étudier
+	cette synchronisation du temps entre simulateur et ordonnanceur. Notre
+	API prend actuallement en charge l'ordonnanceur par défaut de
+	Kubernetes et ne peut éxécuter que des scénarios simples, cependant
+	elle offre une grande perspective de développement futur afin
+	d'améliorer Batkube pour en faire un simulateur complet de cluster
+	Kubernetes.
+\end{abstract} \selectlanguage{english} \newpage
 
 \tableofcontents* % the asterisk means that the table of contents itself isn't put into the ToC
 \normalsize

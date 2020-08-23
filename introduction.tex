@@ -3,13 +3,14 @@
 The need for scalable computing infrastructure has increased tremendously in
 the last decades, with systems now being designed to reach exascale computing.
 Nearly every field of computer science, from research to the service industry,
-now needs a proper infrastructure. By 2025 computation technology could reach a
+now needs access to consequent infrastructure to host higly available services
+or run computing intensive tasks. By 2025 computation technology could reach a
 fourth of the global electricity spending \cite{andrae2017total}, showing how
 much infrastructures are developing and that this need is still growing. The
-development of smart cities is also bringing new challenges to the table of
+development of smart cities is also bringing new challenges to the field of
 distributed computing with the emerging technology of edge computing.
 
-Organizations generally know what type of infrastructure will meet their needs.
+Each organization has specific needs that can be covered by equally specific infrastructure.
 It can take the form of huge data centers to store and analyze data, HPC
 cluster with GPU banks to run application such as machine learning algorithms,
 crypto-currency mining, genome sequencing or weather forecast.  However,
@@ -29,18 +30,15 @@ the range of their experiments.
 
 Theoretical studies are also out of the question because of the multiplicity of
 the components at stake. In a RJMS\footnote{The RJMS is the software at the
-core of the cluster. It is a synonym for a scheduler and manages resources,
-energy consumption, users' jobs life-cycle and implements scheduling policies.}
-the scheduler interacts directly with the queuing system, the resource manager,
-external events like resource failures, jobs killed by users and the
-infrastructure itself: its topology, size, and type and capacity of the
-resources. Also, the objectives in performance vary from system to system: high
-resource utilization, lower energy consumption, or low waiting times for the
-user for example as well as the scheduling policies. \\
-
+core of the cluster. It manages resources, energy consumption, users' jobs
+life-cycle and implements scheduling policies.} the scheduler interacts
+directly with the queuing system, the resource manager, external events and the
+infrastructure itself. Also, the objectives in performance vary from system to
+system: high resource utilization, lower energy consumption, or low waiting
+times for the user for example as well as the scheduling policies. \\
 
 Simulation allows to tackle these issues by enabling users to draw conclusions
-empirically without the need to fire up real workloads. With simulation, the
+empirically without the need of a real test bed. With simulation, the
 gain in both time and spent energy can be extreme: a HPC job spanning months on
 a real system can be simulated in a matter of minutes on any domestic computer.
 Another major point is that it also brings reproducibility to these
@@ -55,11 +53,11 @@ schedulers or RJMS in order to validate their algorithms. Thus, they are
 strongly coupled together and are not usable with any other software. They are
 either shipped with the software itself or worst, they are never released and
 discarded at the end of the development process.  Moreover, still according to
-\cite{poquet:tel-01757245}, strong coupling may lead to unrealistic models
-because in that case the scheduler often has an instant access to all the
-information it requires about the system. This conflicts with the real world as
-schedulers may not have access to that much information on a system or may
-suffer from latency, impacting the scheduling decisions.\\
+Poquer \cite{poquet:tel-01757245}, strong coupling may lead to unrealistic
+models because in that case the scheduler often has an instant access to all
+the information it requires about the system. This conflicts with the real
+world as schedulers may not have access to that much information on a system or
+may suffer from latency, impacting the scheduling decisions.\\
 
 
 To try and assess these issues a team of researchers at the LIG developed
@@ -71,26 +69,25 @@ framework, which accuracy and scalability were extensively tested over the
 years under complex networks, topologies and workloads. 
 
 Batsim was designed to support algorithms written in any languages, as long as
-they support its communication protocol. It means that, while any scheduler
-found in the wild can potentially be run on a Batsim simulation, they still
-have to be adapted to make them compatible. This master's project is dedicated
-on developing an interface between Batsim and
+they support its communication protocol. It means that, while any scheduler can
+potentially be run on a Batsim simulation, they still have to be adapted to
+make them compatible. This master's project is dedicated on developing an
+interface between Batsim and
 Kubernetes\footnote{https://github.com/kubernetes/kubernetes/} schedulers to
-run clusters simulations. Kube\footnote{A short term for Kubernetes. It is also
-sometimes called k8s.} is an open source container management software widely
-exploited in the industry for its ease of use and wide range of capabilities.
-It has freed developers from the cumbersome task of setting up low level
-software on their servers to run their services and automates maintenance,
-scaling, and administration of their applications.  For all these reasons it
-has become a standard solution for any organization that wishes to build new
-platforms from the ground up with limited means as well as for large and
-established institutions that wish to leverage container technology to have
+run clusters simulations. Kubernetes is an open source container management
+software widely exploited in the industry for its ease of use and wide range of
+capabilities.  It has freed developers from the cumbersome task of setting up
+low level software on their servers to run their services and automates
+maintenance, scaling, and administration of their applications.  For all these
+reasons it has become a standard solution for any organization that wishes to
+build new platforms from the ground up with limited means as well as for large
+and established institutions that wish to leverage container technology to have
 more control over their resources.\\
 
 This memoir depicts how we were effectively able to run simulations of
 Kubernetes clusters for any scheduler written in the Go programming language.
 The objective is to prove that adapting Kubernetes schedulers to Batsim is
-possible and test the viability of the approach. One one side, Kubernetes
+possible and test the viability of the approach. On one side, Kubernetes
 schedulers follow the asynchronous paradigm of APIs to interact with the rest
 of the cluster, and on the other side Batsim was designed to run simulations
 with event based and deterministic schedulers.  The challenge is to build an
