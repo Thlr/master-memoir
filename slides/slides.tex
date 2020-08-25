@@ -1,4 +1,5 @@
 \documentclass[12pt, aspectratio=43]{beamer}
+\usepackage[backend=bibtex]{biblatex} % bibliography
 
 % BEAMER TEMPLATE AND THEME
 \setbeamertemplate{footline}[frame number]
@@ -10,7 +11,8 @@
 \title{Development and evaluation of a Kubernetes cluster simulator based on
 Batsim}
 
-\author{\textbf{Presented by:} Théo Larue\\\textbf{Supervised by:} Olivier Richard \& Michael Mercier}
+\author{\textbf{Presented by:} Théo Larue\\\textbf{Supervised by:} Olivier
+Richard \& Michael Mercier}
 
 \date{August 31, 2020}
 
@@ -31,23 +33,112 @@ Batsim}
 \end{frame}
 
 \section{Introduction}
-\begin{frame}{Introduction}
+\begin{frame}{Computer infrastructures}
+	Distributed systems, many domains: Grid, Edge, HPC, Cloud, P2P, Volunteer, Cluster. 
+
+	These systems increase in complexity. (-> some ref to illustrate the
+	size of supercomputers)
+\end{frame}
+
+\begin{frame}{Studying distributed systems}
+	Why studying these infra? To test a system performances under varying
+	loads, applications, scheduling policies, system size and topology. Or
+	to develop new RJMS or research new scheduling algorithms.
+\end{frame}
+
+\begin{frame}{Studying distributed systems}
+	How to study these infra? Too many elements and interactions to
+	consider, so no theoretical study. 
+
+	Real experiments are too costly (both in time and resources) and not
+	reproducible.
+\end{frame}
+
+\begin{frame}{Studying distributed systems}
+	First solution: emulation resolves the issue of reproducibility.
+
+	Second option: simulation resolves both reproducibility and scalability
+	issues + refs on existing simulators.
 \end{frame}
 
 \section{Literature review}
-\begin{frame}{Literature review}
+\begin{frame}{Domain specific simulators}
+	refs on domain specific simulators.
+\end{frame}
+
+\begin{frame}{Software specific simulators}
+	YARNSim, SLURM simulator
+\end{frame}
+
+\begin{frame}{Publication specific simulators}
+	``Publish and perish'' - Milian Poquet
+\end{frame}
+
+\begin{frame}{Batsim}
+\end{frame}
+
+\begin{frame}{Batsim - related work}
+\end{frame}
+
+\begin{frame}{Kubernetes}
+\end{frame}
+
+\begin{frame}{Kubernetes cluster simulation}
 \end{frame}
 
 \section{Integrating Kubernetes schedulers to Batsim}
-\begin{frame}{Integrating Kubernetes schedulers to Batsim}
+\begin{frame}{Batsim concepts}
+\end{frame}
+
+\begin{frame}{Kubernetes concepts}
+\end{frame}
+
+\begin{frame}{Batkube integration with Kubernetes}
+\end{frame}
+
+\begin{frame}{Time interception}
+\end{frame}
+
+\begin{frame}{Time synchronization}
 \end{frame}
 
 \section{Study of the simulator}
-\begin{frame}{Study of the simulator}
+\begin{frame}{Studied workloads and platforms}
+\end{frame}
+
+\begin{frame}{Minimum delay}
+	TODO for future work, study min delay effect on makespan and mwt
+\end{frame}
+
+\begin{frame}{Timeout}
+\end{frame}
+
+\begin{frame}{Maximum simulation timestep}
+\end{frame}
+
+\begin{frame}{Experimentation on a real cluster}
+\end{frame}
+
+\begin{frame}{Deviation with reality}
 \end{frame}
 
 \section{Discussion and future work}
-\begin{frame}{Discussion and future work}
+\begin{frame}{Capabilities of Batkube}
+\end{frame}
+
+\begin{frame}{Features to implement}
+\end{frame}
+
+\begin{frame}{Limitations}
+\end{frame}
+
+\begin{frame}{Perspectives for future work}
+\end{frame}
+
+\begin{frame}[allowframebreaks]
+        \frametitle{References}
+        %\bibliographystyle{amsalpha}
+	\bibliography{../report/biblio.bib}
 \end{frame}
 
 \end{document}

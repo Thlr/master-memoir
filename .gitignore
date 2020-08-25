@@ -8,3 +8,6 @@ report/master-project-blx.bib
 *.out
 report/_minted-master-project/*
 report/svg-inkscape/*
+slides/slides.nav
+slides/slides.snm
+slides/slides-blx.bib
