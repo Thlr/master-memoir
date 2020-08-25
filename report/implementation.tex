@@ -31,7 +31,7 @@ occuring during the simulation.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[scale=0.5]{imgs/batsim-sequence-diag.png}
+	\includegraphics[scale=0.5]{../imgs/batsim-sequence-diag.png}
 \captionsource{Exchanges between Batsim and the scheduler.}{\url{https://batsim.readthedocs.io/en/latest/protocol.html}}
 	\label{fig:bati-seq-diag}
 \end{figure}
@@ -119,7 +119,7 @@ and the components that make up Kubernetes.
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[scale=0.5]{./imgs/node-overview.png}
+	\includegraphics[scale=0.5]{./../imgs/node-overview.png}
 	\captionsource{Node overview}{\url{https://kubernetes.io/docs/tutorials/kubernetes-basics/explore/explore-intro/}}
 	\label{fig:node-overview}
 \end{figure}
@@ -180,7 +180,7 @@ cluster to any Kubernetes scheduler.
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=\textwidth]{./imgs/components-of-kubernetes.png}
+	\includegraphics[width=\textwidth]{./../imgs/components-of-kubernetes.png}
 	\captionsource{Components of Kubernetes}{\url{https://kubernetes.io/docs/concepts/overview/components/}}
 	\label{fig:kube-components}
 \end{figure}
@@ -198,7 +198,7 @@ event based scheduler to Batsim.
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=0.8\textwidth]{imgs/custom-restapi.png}
+	\includegraphics[width=0.8\textwidth]{../imgs/custom-restapi.png}
 	\caption{Custom REST API in between the scheduler and Batsim.}
 	\label{fig:custom-api}
 \end{figure}
@@ -235,7 +235,7 @@ messages, and \textit{vice versa}.
 
 \begin{figure}[h]
 	\centering
-	\includegraphics[width=\textwidth]{imgs/batkube-architecture-3-synchro.png}
+	\includegraphics[width=\textwidth]{../imgs/batkube-architecture-3-synchro.png}
 	\caption{Architecture of Batkube}
 	\label{fig:batkube-architecture}
 \end{figure}
@@ -296,7 +296,7 @@ simulator because it implied more development on the batkube API to support it.
 
 \begin{figure}[]
 	\centering
-	\includegraphics[scale=0.73]{imgs/time-hijack-Go.png}
+	\includegraphics[scale=0.73]{../imgs/time-hijack-Go.png}
 	\caption{Partially reimplementing Go source code allow us to intercept calls to get machine time.}
 	\label{fig:patch-time}
 \end{figure}
@@ -421,7 +421,7 @@ scheduler, batsky-go and Batkube.
 
 \begin{figure}[]
 	\centering
-	\includesvg[scale=0.8]{imgs/requester-broker}
+	\includesvg[scale=0.8]{../imgs/requester-broker}
 	\caption{Exchange breakdown between batsky-go and Batkube.}
 	\label{fig:time-interception}
 \end{figure}
@@ -466,7 +466,7 @@ and the scheduler with their associated times.\\
 
 \begin{figure}[]
 	\centering
-	\includegraphics[width=0.83\textwidth]{imgs/lignes_de_temps.png}
+	\includegraphics[width=0.83\textwidth]{../imgs/lignes_de_temps.png}
 	\caption{Time sync between the three components. The broker has to take
 	into account both machine time and simulation time.}
 	\label{fig:time_sync}

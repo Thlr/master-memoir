@@ -4,7 +4,7 @@
 *.log
 *.xml
 *.toc
-master-project-blx.bib
+report/master-project-blx.bib
 *.out
-_minted-master-project/*
-svg-inkscape/*
+report/_minted-master-project/*
+report/svg-inkscape/*
