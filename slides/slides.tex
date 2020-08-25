@@ -6,6 +6,8 @@
 \usetheme{Estonia}
 \mode<presentation>
 
+\addbibresource{../report/biblio.bib}
+
 % TITLE PAGE
 \title{Kubernetes cluster simulator based on Batsim}
 \title{Development and evaluation of a Kubernetes cluster simulator based on
@@ -36,8 +38,8 @@ Richard \& Michael Mercier}
 \begin{frame}{Computer infrastructures}
 	Distributed systems, many domains: Grid, Edge, HPC, Cloud, P2P, Volunteer, Cluster. 
 
-	These systems increase in complexity. (-> some ref to illustrate the
-	size of supercomputers)
+	These systems are very complex. (some graph to illustrate the
+	increase in size of supercomputers)
 \end{frame}
 
 \begin{frame}{Studying distributed systems}
@@ -55,15 +57,16 @@ Richard \& Michael Mercier}
 \end{frame}
 
 \begin{frame}{Studying distributed systems}
-	First solution: emulation resolves the issue of reproducibility.
+	Emulation resolves the issue of reproducibility.
 
-	Second option: simulation resolves both reproducibility and scalability
-	issues + refs on existing simulators.
+	Simulation resolves both reproducibility and scalability
+	issues.
 \end{frame}
 
 \section{Literature review}
 \begin{frame}{Domain specific simulators}
-	refs on domain specific simulators.
+	refs on domain specific simulators, summed up in a table. Explain
+	briefly the concept behind some of them.
 \end{frame}
 
 \begin{frame}{Software specific simulators}
@@ -74,32 +77,81 @@ Richard \& Michael Mercier}
 	``Publish and perish'' - Milian Poquet
 \end{frame}
 
+\begin{frame}{SimGrid}
+	SimGrid: Grid simulator (so general purpose). Versatile, scalable,
+	accurate.
+
+	Cpu = a computation speed.\\
+	Disk = a capacity, a latency, a service rate.\\
+	Network = a flow model.
+
+	Simple models but thoroughly validated.
+\end{frame}
+
 \begin{frame}{Batsim}
+	Aimed at studying RJMS.\\
+	Strong decoupling decision process / simulator.
 \end{frame}
 
 \begin{frame}{Batsim - related work}
+	Alea: modular, extensible.
+
+	Accasim: supports additional information (temperature, power
+	consuption). Very efficient in terms of simulation time and memory
+	usage.
+
+	Both outperform Batsim in terms of scalability. However it is not fair
+	to compare them on this point because Batsim relies on well thought
+	models, when these two only implement delay jobs. Also Batsim has the
+	decoupling with the decision process.
 \end{frame}
 
 \begin{frame}{Kubernetes}
+	Explain containers real quick.
+
+	Container orchestration software, description based.
 \end{frame}
 
 \begin{frame}{Kubernetes cluster simulation}
+	k8s-cluster-simulator: open source, student project, delay jobs.
+	Schedulers provided via a Go interface.
+
+	joySim: closed-source, fully fledged kubernetes cluster simulator,
+	service oriented (mock nodes).
 \end{frame}
 
 \section{Integrating Kubernetes schedulers to Batsim}
 \begin{frame}{Batsim concepts}
+	[ schema échanges batsim - scheduler ]
+
+	Batsim events and protocol.
+
+	User defined workloads.
 \end{frame}
 
 \begin{frame}{Kubernetes concepts}
+	[ schema architecture kube ]
+
+	Cluster, Nodes, Pods.
+
+	Present the api-server, and how everything revolves around it. Several
+	schedulers can be used at once.
 \end{frame}
 
 \begin{frame}{Batkube integration with Kubernetes}
+	[ schema custom api ]
 \end{frame}
 
 \begin{frame}{Time interception}
+	[ schema lib go custom ]
+\end{frame}
+
+\begin{frame}{batsky-go}
+	Explication fonctionnement batsky-go. (diagramme séquence)
 \end{frame}
 
 \begin{frame}{Time synchronization}
+	Schéma lignes de temps.
 \end{frame}
 
 \section{Study of the simulator}
@@ -107,38 +159,50 @@ Richard \& Michael Mercier}
 \end{frame}
 
 \begin{frame}{Minimum delay}
-	TODO for future work, study min delay effect on makespan and mwt
+	TODO for future work: study min delay effect on makespan and mwt
 \end{frame}
 
 \begin{frame}{Timeout}
 \end{frame}
 
 \begin{frame}{Maximum simulation timestep}
+	the max timestep onyl experiment did not how much. Need to couple it
+	with a backoff multiplier experiment also.
 \end{frame}
 
 \begin{frame}{Experimentation on a real cluster}
+	[ schema cluster emulé ]
 \end{frame}
 
 \begin{frame}{Deviation with reality}
+	[meme table que dans le raport]
+	Reprendre les analyses du rapport.
 \end{frame}
 
 \section{Discussion and future work}
 \begin{frame}{Capabilities of Batkube}
-\end{frame}
-
-\begin{frame}{Features to implement}
+	- delay jobs\\
+	- cpu and memory requests\\
+	- can patch any kubernetes scheduler written in Go\\
+	- the api only supports the default scheduler
 \end{frame}
 
 \begin{frame}{Limitations}
+	- memory hungry (in fact, the scheduler is memory hungry)\\
+	- some problems with the scheduler\\
+	- not scalable
 \end{frame}
 
 \begin{frame}{Perspectives for future work}
+	- parallel jobs\\
+	- storage\\
+	- more complete api: support for more schedulers but also tools (monitoring tools)
 \end{frame}
 
 \begin{frame}[allowframebreaks]
         \frametitle{References}
         %\bibliographystyle{amsalpha}
-	\bibliography{../report/biblio.bib}
+	\printbibliography
 \end{frame}
 
 \end{document}
