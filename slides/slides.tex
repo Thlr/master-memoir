@@ -1,5 +1,7 @@
 \documentclass[12pt, aspectratio=43]{beamer}
 \usepackage[backend=bibtex, style=authoryear]{biblatex} % bibliography
+\usepackage{multirow}
+\usepackage{adjustbox}
 
 % BEAMER TEMPLATE AND THEME
 \setbeamertemplate{footline}[frame number]
@@ -207,39 +209,108 @@ Richard \& Michael Mercier}
 		\includegraphics[scale=0.38]{../imgs/requester-broker.pdf}
 		
 		\column{0.5\textwidth}
-		Exchanges between batsky-go (designed by ``time'') and Batsim
+		Exchanges between the scheduler, batsky-go (``time'') and Batsim
 	\end{columns}
 \end{frame}
 
-\begin{frame}{Time synchronization}
+\begin{frame}[allowframebreaks]{Time synchronization}
+	TODO: explain CML
+	\framebreak
+
 	\centering
-	\includegraphics[width=0.85\textwidth]{../imgs/lignes_de_temps.pdf}\\
+	\includegraphics[width=0.87\textwidth]{../imgs/lignes_de_temps_simple.pdf}\\
+	\small{Time synchronization between Batsim and the scheduler}
+\end{frame}
+
+\begin{frame}{Parameters of the synchronization}
+	\only<1>{
+		\centering
+		\includegraphics[scale=0.3]{../imgs/min-delay.png}\\
+		Minimum delay
+	}
+	\only<2>{
+		\centering
+		\includegraphics[scale=0.3]{../imgs/timeout.png}\\
+		Timeout value
+	}
+	\only<3>{
+		\centering
+		\includegraphics[scale=0.2]{../imgs/max-timestep.png}\\
+		Simulation time step $\in$ [\texttt{base-simulation-timestep}, \texttt{max-simulation-timestep}]
+	}
+\end{frame}
+
+\begin{frame}{Time synchronization breakdown}
+	\centering
+	\includegraphics[width=0.87\textwidth]{../imgs/lignes_de_temps.pdf}\\
 	\small{Time synchronization between Batsim and the scheduler}
 \end{frame}
 
 \section{Study of the simulator}
 \begin{frame}{Studied workloads and platforms}
+	TODO
+	\centering
+	\begin{tabular}{|c|c|c|c|c|c|}
+		\hline\\
+		name & number of jobs & jobs type & sub time & resource requests & platform
+		\hline\\
+		burst & 200 & delay (170s) & at time zero & 1 cpu & 16x1\\
+		spaced & 200 & delay (170s) & every ten seconds & 1 cpu & 16x1\\
+		
+	\end{tabular}
 \end{frame}
 
-\begin{frame}{Minimum delay}
-	TODO for future work: study min delay effect on makespan and mwt
+\begin{frame}[allowframebreaks]{Minimum delay}
+	\centering
+	\includegraphics[scale=0.3]{../imgs/min-delay_crash_old.png}\\
+	Note: inclure ce graphe?
+
+	\includegraphics[width=\textwidth]{../imgs/min-delay_duration.png}
 \end{frame}
 
-\begin{frame}{Timeout}
+\begin{frame}[allowframebreaks]{Timeout}
+	\centering
+	\includegraphics[width=\textwidth]{../imgs/timeout_burst_spaced.png}
+	\includegraphics[width=\textwidth]{../imgs/timeout_realistic.png}
 \end{frame}
 
-\begin{frame}{Maximum simulation timestep}
-	the max timestep onyl experiment did not how much. Need to couple it
-	with a backoff multiplier experiment also.
+\begin{frame}[allowframebreaks]{Maximum simulation timestep}
+	\centering
+	\includegraphics[width=\textwidth]{../imgs/max-timestep_burst_sp.png}
+	\includegraphics[width=\textwidth]{../imgs/max-timestep_realistic.png}
 \end{frame}
 
 \begin{frame}{Experimentation on a real cluster}
-	[ schema cluster emulé ]
+	\centering
+	\includegraphics[width=0.8\textwidth]{../imgs/expe-protocole-v2.pdf}
 \end{frame}
 
 \begin{frame}{Deviation with reality}
-	[meme table que dans le raport]
-	Reprendre les analyses du rapport.
+	\centering
+	\begin{adjustbox}{max width=\textwidth}
+		\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+			\hline
+
+			\multirow{3}{*}{workload} & \multicolumn{4}{c|}{\textbf{makespan}} & \multicolumn{4}{c|}{\textbf{mean waiting time}}\\
+
+			\cline{2-9}
+
+			& \multicolumn{2}{c|}{emulated} &
+			\multicolumn{2}{c|}{simulated} & \multicolumn{2}{c|}{emulated}
+			& \multicolumn{2}{c|}{simulated} \\
+
+			\cline{2-9}
+
+			& $\mu$ & $\sigma$ & $\mu$ & $\sigma$ & $\mu$ & $\sigma$ & $\mu$ & $\sigma$ \\
+
+			\hline
+
+			burst & 2467 & 28.3 & 2215 (-252) & 0.508 & 1077 & 10.6 & 970 (-107) & 12.6 \\
+			spaced & 2468 & 5.14 & 2257 (-211) & 16.9 & 146 & 1.67 & 48.1 (-97.9) & 9.44 \\
+			realistic & 32556 & - & 32555 (-1) & 1.30 & 2884 & - & 2020 (-864) & 950 \\
+			\hline
+		\end{tabular}
+	\end{adjustbox}
 \end{frame}
 
 \section{Discussion and future work}
