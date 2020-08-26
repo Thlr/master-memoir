@@ -18,7 +18,7 @@
   \end{frame}
 }
 
-\addbibresource{../report/biblio.bib}
+\addbibresource{../biblio.bib}
 
 % TITLE PAGE
 \title{Kubernetes cluster simulator based on Batsim}
@@ -48,31 +48,51 @@ Richard \& Michael Mercier}
 
 \section{Introduction}
 \begin{frame}{Computer infrastructures}
-	Distributed systems, many domains: Grid, Edge, HPC, Cloud, P2P, Volunteer, Cluster. 
+	\uncover<1->{
+		\textit{A distributed system is a system whose components are
+		located on different networked computers, which communicate and
+	coordinate their actions by passing messages to one another.}
+	\footnote{\cite{andrew2002tanenbaum}}
+	}
 
-	These systems are very complex. (some graph to illustrate the
-	increase in size of supercomputers)
+	\uncover<2->{
+		\begin{exampleblock}{Many domains}
+			Grid, Edge, HPC, Cloud, P2P, Volunteer.
+		\end{exampleblock}
+	}
 \end{frame}
 
-\begin{frame}{Studying distributed systems}
-	Why studying these infra? To test a system performances under varying
-	loads, applications, scheduling policies, system size and topology. Or
-	to develop new RJMS or research new scheduling algorithms.
+\begin{frame}[allowframebreaks]{Studying distributed systems}
+	\centering
+	Why studying these infrastructures?
+	%Why studying these infra? To test a system performances under varying
+	%loads, applications, scheduling policies, system size and topology. Or
+	%to develop new RJMS or research new scheduling algorithms.
+	
+	\framebreak
+	TODO
+	One problem in particular: scheduling.
 \end{frame}
 
-\begin{frame}{Studying distributed systems}
-	How to study these infra? Too many elements and interactions to
-	consider, so no theoretical study. 
+\begin{frame}{Different approches}
+	\uncover<1->{
+		\begin{block}{How to study these infra?}
+			\begin{itemize}
+					\uncover<2->{\item Theoretical study.}
+					\uncover<3->{\item Real experiments.}
+					\uncover<4->{\item Emulation.}
+					\uncover<5->{\item Simulation.}
+			\end{itemize}
+		\end{block}
+	}
+	%How to study these infra? Too many elements and interactions to
+	%consider, so no theoretical study. 
 
-	Real experiments are too costly (both in time and resources) and not
-	reproducible.
-\end{frame}
+	%Real experiments are too costly (both in time and resources) and not
+	%reproducible.
 
-\begin{frame}{Studying distributed systems}
-	Emulation resolves the issue of reproducibility.
-
-	Simulation resolves both reproducibility and scalability
-	issues.
+	%Note: revoir ref sur les interactions inattendues entre scheduler et
+	%queues 
 \end{frame}
 
 \section{Literature review}
@@ -94,14 +114,14 @@ Richard \& Michael Mercier}
 
 	Cpu = a computation speed.\\
 	Storage = a seek time and a data transfert rate.\\
-	Network = a flow model, modeling bandwith sharing behaviors of actual
-	protocol.
+	Network = a flow model, modeling bandwith sharing behaviors.
 
 	Simple models but thoroughly validated.
 \end{frame}
 
 \begin{frame}{Batsim}
-	Aimed at studying RJMS.\\
+	Aimed at studying RJMS.
+
 	Strong decoupling decision process / simulator.
 \end{frame}
 
@@ -134,11 +154,13 @@ Richard \& Michael Mercier}
 \section{Integrating Kubernetes schedulers to Batsim}
 
 \begin{frame}{Technical challenges}
-	\begin{enumerate}
-		\uncover<1->{\item Integration with Kubernetes.}
-		\uncover<2->{\item Intercepting scheduler time.}
-		\uncover<3->{\item Time synchronization between Batsim and the scheduler.}
-	\end{enumerate}
+	\begin{alertblock}{Challenges to tackle}
+		\begin{enumerate}
+				\uncover<1->{\item Integration with Kubernetes.}
+				\uncover<2->{\item Intercepting scheduler time.}
+				\uncover<3->{\item Time synchronization between Batsim and the scheduler.}
+		\end{enumerate}
+	\end{alertblock}
 \end{frame}
 
 \begin{frame}{Batsim concepts}
@@ -163,6 +185,15 @@ Richard \& Michael Mercier}
 	\only<2>{\includegraphics[width=\textwidth]{../imgs/components-of-kubernetes-2.png}}
 	\tiny{source: \url{https://kubernetes.io/docs/concepts/overview/components/}}\\
 	\small{Kubernetes components.}
+\end{frame}
+
+\begin{frame}{Different paradigms}
+	Batsim: event based, simulation time.
+
+	Kubernetes scheduler: asynchronous calls to the API, machine time.
+
+	The goal is to make the scheduler event based and relying on simulation
+	time for Batsim, and make Batsim a kube-api-server to the scheduler.
 \end{frame}
 
 \begin{frame}{Batkube integration with Kubernetes}
@@ -194,7 +225,6 @@ Richard \& Michael Mercier}
 		\end{block}
 	\end{columns}
 \end{frame}
-
 
 \begin{frame}{Time interception}
 	\centering
@@ -249,15 +279,14 @@ Richard \& Michael Mercier}
 \section{Study of the simulator}
 \begin{frame}{Studied workloads and platforms}
 	TODO
-	\centering
-	\begin{tabular}{|c|c|c|c|c|c|}
-		\hline\\
-		name & number of jobs & jobs type & sub time & resource requests & platform
-		\hline\\
-		burst & 200 & delay (170s) & at time zero & 1 cpu & 16x1\\
-		spaced & 200 & delay (170s) & every ten seconds & 1 cpu & 16x1\\
-		
-	\end{tabular}
+	%\centering
+	%\begin{tabular}{|c|c|c|c|c|c|}
+	%	\hline\\
+	%	name & number of jobs & jobs type & sub time & resource requests & platform
+	%	\hline\\
+	%	burst & 200 & delay (170s) & at time zero & 1 cpu & 16x1\\
+	%	spaced & 200 & delay (170s) & every ten seconds & 1 cpu & 16x1\\
+	%\end{tabular}
 \end{frame}
 
 \begin{frame}[allowframebreaks]{Minimum delay}
