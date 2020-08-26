@@ -1,10 +1,20 @@
 \documentclass[12pt, aspectratio=43]{beamer}
-\usepackage[backend=bibtex]{biblatex} % bibliography
+\usepackage[backend=bibtex, style=authoryear]{biblatex} % bibliography
 
 % BEAMER TEMPLATE AND THEME
 \setbeamertemplate{footline}[frame number]
 \usetheme{Estonia}
 \mode<presentation>
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
 
 \addbibresource{../report/biblio.bib}
 
@@ -78,12 +88,12 @@ Richard \& Michael Mercier}
 \end{frame}
 
 \begin{frame}{SimGrid}
-	SimGrid: Grid simulator (so general purpose). Versatile, scalable,
-	accurate.
+	SimGrid: Versatile, scalable, accurate.
 
 	Cpu = a computation speed.\\
-	Disk = a capacity, a latency, a service rate.\\
-	Network = a flow model.
+	Storage = a seek time and a data transfert rate.\\
+	Network = a flow model, modeling bandwith sharing behaviors of actual
+	protocol.
 
 	Simple models but thoroughly validated.
 \end{frame}
@@ -102,8 +112,7 @@ Richard \& Michael Mercier}
 
 	Both outperform Batsim in terms of scalability. However it is not fair
 	to compare them on this point because Batsim relies on well thought
-	models, when these two only implement delay jobs. Also Batsim has the
-	decoupling with the decision process.
+	models, when these two only implement delay jobs.
 \end{frame}
 
 \begin{frame}{Kubernetes}
@@ -121,37 +130,91 @@ Richard \& Michael Mercier}
 \end{frame}
 
 \section{Integrating Kubernetes schedulers to Batsim}
+
+\begin{frame}{Technical challenges}
+	\begin{enumerate}
+		\uncover<1->{\item Integration with Kubernetes.}
+		\uncover<2->{\item Intercepting scheduler time.}
+		\uncover<3->{\item Time synchronization between Batsim and the scheduler.}
+	\end{enumerate}
+\end{frame}
+
 \begin{frame}{Batsim concepts}
-	[ schema échanges batsim - scheduler ]
+	\begin{columns}
+		\column{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{../imgs/batsim-sequence-diag.png}
+		\tiny{source \url{https://batsim.readthedocs.io}}
 
-	Batsim events and protocol.
+		\column{0.5\textwidth}
+		Batsim events and protocol.
 
-	User defined workloads.
+		User defined workloads.
+
+		(insert json examples?)
+\end{columns}
 \end{frame}
 
 \begin{frame}{Kubernetes concepts}
-	[ schema architecture kube ]
-
-	Cluster, Nodes, Pods.
-
-	Present the api-server, and how everything revolves around it. Several
-	schedulers can be used at once.
+	\centering
+	\only<1>{\includegraphics[width=\textwidth]{../imgs/components-of-kubernetes.png}}
+	\only<2>{\includegraphics[width=\textwidth]{../imgs/components-of-kubernetes-2.png}}
+	\tiny{source: \url{https://kubernetes.io/docs/concepts/overview/components/}}\\
+	\small{Kubernetes components.}
 \end{frame}
 
 \begin{frame}{Batkube integration with Kubernetes}
-	[ schema custom api ]
+	\centering
+	\includegraphics[width=0.8\textwidth]{../imgs/custom-api.pdf}\\
+	\small{Reimplementation of a custom API.}
 \end{frame}
 
+\begin{frame}{Architeture of Batkube}
+	\centering
+	\includegraphics[width=\textwidth]{../imgs/batkube-architecture-3-synchro.pdf}
+	\small{Global architecture of Batkube.}
+\end{frame}
+
+
+\begin{frame}{Similar resources}
+	\begin{columns}
+		\column{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{../imgs/node-overview.png}
+		\tiny{source: \url{https://kubernetes.io/docs/tutorials/kubernetes-basics/explore/explore-intro/}}
+
+		\column{0.5\textwidth}
+		\begin{block}{Translation between Kubernetes and Batsim}
+			\begin{itemize}
+				\item A Pod = a job.
+				\item A Node = a compute resource.
+			\end{itemize}
+		\end{block}
+	\end{columns}
+\end{frame}
+
+
 \begin{frame}{Time interception}
-	[ schema lib go custom ]
+	\centering
+	\includegraphics[width=0.6\textwidth]{../imgs/synchro-go-sources.pdf}\\
+	\small{Schedulers are patched to redirect their time.}
 \end{frame}
 
 \begin{frame}{batsky-go}
-	Explication fonctionnement batsky-go. (diagramme séquence)
+	\begin{columns}
+		\column{0.5\textwidth}
+		\centering
+		\includegraphics[scale=0.38]{../imgs/requester-broker.pdf}
+		
+		\column{0.5\textwidth}
+		Exchanges between batsky-go (designed by ``time'') and Batsim
+	\end{columns}
 \end{frame}
 
 \begin{frame}{Time synchronization}
-	Schéma lignes de temps.
+	\centering
+	\includegraphics[width=0.85\textwidth]{../imgs/lignes_de_temps.pdf}\\
+	\small{Time synchronization between Batsim and the scheduler}
 \end{frame}
 
 \section{Study of the simulator}
@@ -201,7 +264,6 @@ Richard \& Michael Mercier}
 
 \begin{frame}[allowframebreaks]
         \frametitle{References}
-        %\bibliographystyle{amsalpha}
 	\printbibliography
 \end{frame}
 
