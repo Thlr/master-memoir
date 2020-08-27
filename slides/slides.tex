@@ -47,44 +47,52 @@ Richard \& Michael Mercier}
 \end{frame}
 
 \section{Introduction}
-\begin{frame}{Computer infrastructures}
-	\uncover<1->{
-		\textit{A distributed system is a system whose components are
-		located on different networked computers, which communicate and
-	coordinate their actions by passing messages to one another.}
-	\footnote{\cite{andrew2002tanenbaum}}
-	}
 
-	\uncover<2->{
-		\begin{exampleblock}{Many domains}
-			Grid, Edge, HPC, Cloud, P2P, Volunteer.
-		\end{exampleblock}
-	}
+\begin{frame}{Computer infrastructure}
+	TODO: definition of a computer infrastructure
+
+	\includegraphics[scale=0.3]{../imgs/comp-infra-michael.png}
+	\small{Placeholder (from michael thesis). TODO: my own illustration}
 \end{frame}
 
-\begin{frame}[allowframebreaks]{Studying distributed systems}
-	\centering
-	Why studying these infrastructures?
-	%Why studying these infra? To test a system performances under varying
-	%loads, applications, scheduling policies, system size and topology. Or
-	%to develop new RJMS or research new scheduling algorithms.
-	
-	\framebreak
-	TODO
-	One problem in particular: scheduling.
+\begin{frame}{Resource and Jobs Management System}
+	TODO: the RJMS is at the core of the hpc cluster.
+
+	def or diagram illustrating a RJMS (without much details). Show that the
+	scheduler is part of the RJMS.
+
+	Examples: OAR, Apache Mesos, hadoop YARN, SLURM
 \end{frame}
 
-\begin{frame}{Different approches}
-	\uncover<1->{
-		\begin{block}{How to study these infra?}
+\begin{frame}{Kubernetes}
+	Explain containers real quick.
+
+	Container orchestration software, description based.
+\end{frame}
+
+\begin{frame}{Studying computer infrastructures}
+	\begin{columns}
+		\column{0.5\textwidth}
+		\begin{exampleblock}{Objects of studies}
 			\begin{itemize}
-					\uncover<2->{\item Theoretical study.}
-					\uncover<3->{\item Real experiments.}
-					\uncover<4->{\item Emulation.}
-					\uncover<5->{\item Simulation.}
+				\item Workloads
+				\item Applications
+				\item System size
+				\item Network topology
+				\item Scheduling policies
+			\end{itemize}
+		\end{exampleblock}
+
+		\column{0.5\textwidth}
+		\begin{block}{How ?}
+			\begin{itemize}
+				\item Analytical study
+				\item Real experiments
+				\item Emulation
+				\item Simulation
 			\end{itemize}
 		\end{block}
-	}
+	\end{columns}
 	%How to study these infra? Too many elements and interactions to
 	%consider, so no theoretical study. 
 
@@ -92,7 +100,19 @@ Richard \& Michael Mercier}
 	%reproducible.
 
 	%Note: revoir ref sur les interactions inattendues entre scheduler et
-	%queues 
+	%queues
+\end{frame}
+
+\begin{frame}{Batsim}
+	Aimed at studying RJMS.
+
+	Strong decoupling decision process / simulator.
+\end{frame}
+
+\begin{frame}{The scheduling problem}
+	\centering
+	\includegraphics[width=0.8\textwidth]{../imgs/gantt_small.png}
+	\textbf{Scheduling} is the act of allocating tasks to resources.
 \end{frame}
 
 \begin{frame}{Contribution}
@@ -102,8 +122,7 @@ Richard \& Michael Mercier}
 
 \section{Literature review}
 \begin{frame}{Domain specific simulators}
-	refs on domain specific simulators (summed up in a table?). Explain
-	briefly the concept behind some of them.
+	refs on domain specific simulators 
 \end{frame}
 
 \begin{frame}{Software specific simulators}
@@ -124,11 +143,6 @@ Richard \& Michael Mercier}
 	Simple models but thoroughly validated.
 \end{frame}
 
-\begin{frame}{Batsim}
-	Aimed at studying RJMS.
-
-	Strong decoupling decision process / simulator.
-\end{frame}
 
 \begin{frame}{Related work}
 	GridSim
@@ -138,12 +152,6 @@ Richard \& Michael Mercier}
 	Accasim: supports additional information (temperature, power
 	consuption). Very efficient in terms of simulation time and memory
 	usage.
-\end{frame}
-
-\begin{frame}{Kubernetes}
-	Explain containers real quick.
-
-	Container orchestration software, description based.
 \end{frame}
 
 \begin{frame}{Kubernetes cluster simulation}
@@ -211,23 +219,22 @@ Richard \& Michael Mercier}
 	\small{Global architecture of Batkube.}
 \end{frame}
 
-
-\begin{frame}{Similar resources}
-	\begin{columns}
-		\column{0.5\textwidth}
-		\centering
-		\includegraphics[width=\textwidth]{../imgs/node-overview.png}
-		\tiny{source: \url{https://kubernetes.io/docs/tutorials/kubernetes-basics/explore/explore-intro/}}
-
-		\column{0.5\textwidth}
-		\begin{block}{Translation between Kubernetes and Batsim}
-			\begin{itemize}
-				\item A Pod = a job.
-				\item A Node = a compute resource.
-			\end{itemize}
-		\end{block}
-	\end{columns}
-\end{frame}
+%\begin{frame}{Similar resources}
+%	\begin{columns}
+%		\column{0.5\textwidth}
+%		\centering
+%		\includegraphics[width=\textwidth]{../imgs/node-overview.png}
+%		\tiny{source: \url{https://kubernetes.io/docs/tutorials/kubernetes-basics/explore/explore-intro/}}
+%
+%		\column{0.5\textwidth}
+%		\begin{block}{Translation between Kubernetes and Batsim}
+%			\begin{itemize}
+%				\item A Pod = a job.
+%				\item A Node = a compute resource.
+%			\end{itemize}
+%		\end{block}
+%	\end{columns}
+%\end{frame}
 
 \begin{frame}{Time interception}
 	\centering
@@ -235,16 +242,16 @@ Richard \& Michael Mercier}
 	\small{Schedulers are patched to redirect their time.}
 \end{frame}
 
-\begin{frame}{batsky-go}
-	\begin{columns}
-		\column{0.5\textwidth}
-		\centering
-		\includegraphics[scale=0.38]{../imgs/requester-broker.pdf}
-		
-		\column{0.5\textwidth}
-		Exchanges between the scheduler, batsky-go (``time'') and Batsim
-	\end{columns}
-\end{frame}
+%\begin{frame}{batsky-go}
+%	\begin{columns}
+%		\column{0.5\textwidth}
+%		\centering
+%		\includegraphics[scale=0.38]{../imgs/requester-broker.pdf}
+%		
+%		\column{0.5\textwidth}
+%		Exchanges between the scheduler, batsky-go (``time'') and Batsim
+%	\end{columns}
+%\end{frame}
 
 \begin{frame}[allowframebreaks]{Time synchronization}
 	TODO: explain CML
@@ -255,22 +262,13 @@ Richard \& Michael Mercier}
 	\small{Time synchronization between Batsim and the scheduler}
 \end{frame}
 
-\begin{frame}{Parameters of the synchronization}
-	\only<1>{
+\begin{frame}[allowframebreaks]{Parameters of the synchronization}
 		\centering
-		\includegraphics[scale=0.3]{../imgs/min-delay.png}\\
-		Minimum delay
-	}
-	\only<2>{
-		\centering
-		\includegraphics[scale=0.3]{../imgs/timeout.png}\\
+		\includegraphics[width=0.87\textwidth]{../imgs/timeout.pdf}\\
 		Timeout value
-	}
-	\only<3>{
-		\centering
-		\includegraphics[scale=0.2]{../imgs/max-timestep.png}\\
+
+		\includegraphics[width=0.8\textwidth]{../imgs/max-timestep.pdf}\\
 		Simulation time step $\in$ [\texttt{base-simulation-timestep}, \texttt{max-simulation-timestep}]
-	}
 \end{frame}
 
 \begin{frame}{Time synchronization breakdown}
@@ -280,8 +278,9 @@ Richard \& Michael Mercier}
 \end{frame}
 
 \section{Study of the simulator}
-\begin{frame}{Studied workloads and platforms}
-	TODO
+
+\begin{frame}{Experimental design}
+	TODO: Scheduler used, platforms and workloads tested, what experiments (parameters, metrics studied, repetitions)
 	%\centering
 	%\begin{tabular}{|c|c|c|c|c|c|}
 	%	\hline\\
@@ -290,14 +289,6 @@ Richard \& Michael Mercier}
 	%	burst & 200 & delay (170s) & at time zero & 1 cpu & 16x1\\
 	%	spaced & 200 & delay (170s) & every ten seconds & 1 cpu & 16x1\\
 	%\end{tabular}
-\end{frame}
-
-\begin{frame}[allowframebreaks]{Minimum delay}
-	\centering
-	\includegraphics[scale=0.3]{../imgs/min-delay_crash_old.png}\\
-	Note: inclure ce graphe?
-
-	\includegraphics[width=\textwidth]{../imgs/min-delay_duration.png}
 \end{frame}
 
 \begin{frame}[allowframebreaks]{Timeout}
@@ -345,18 +336,40 @@ Richard \& Michael Mercier}
 	\end{adjustbox}
 \end{frame}
 
-\section{Discussion and future work}
-\begin{frame}{Capabilities of Batkube}
-	- delay jobs\\
-	- cpu and memory requests\\
-	- can patch any kubernetes scheduler written in Go\\
-	- the api only supports the default scheduler
+\begin{frame}{Conclusion}
+	Deviation with reality: can be fixed with some work on the api. Need
+	experiments to measur and quantify this deviation.
+
+	max timestep: studying max timestep alone is not enough, need to study
+	it with backoff multiplier.
+
+	base time step: need an experiment on it. Too much importance was
+	credited to max timestep, the base timestep might have importance.
 \end{frame}
 
-\begin{frame}{Limitations}
-	- memory hungry (in fact, the scheduler is memory hungry)\\
-	- some problems with the scheduler\\
-	- not scalable
+\section{Discussion and future work}
+\begin{frame}{Capabilities and limitations of Batkube}
+	WIP
+	\begin{columns}
+		\column{0.5\textwidth}
+		\begin{block}{Capabilities}
+			\begin{itemize}
+				\item Delay jobs
+				\item Cpu and memory requests
+				\item Can patch any kubernetes scheduler written in Go
+				\item The api only supports the default scheduler
+			\end{itemize}
+		\end{block}
+
+		\column{0.5\textwidth}
+		\begin{alertblock}{Limitations}
+			\begin{itemize}
+				\item Memory hungry (in fact, the scheduler is memory hungry)
+				\item Some problems with the scheduler
+				\item Not scalable
+			\end{itemize}
+		\end{alertblock}
+	\end{columns}
 \end{frame}
 
 \begin{frame}{Perspectives for future work}
@@ -371,4 +384,3 @@ Richard \& Michael Mercier}
 \end{frame}
 
 \end{document}
-

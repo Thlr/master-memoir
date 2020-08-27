@@ -1,0 +1,5 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+	./scheduler \PYGZhy{}\PYGZhy{}kubeconfig\PYG{o}{=}\PYGZlt{}kubeconfig.yaml\PYGZgt{}
+	\PYGZhy{}\PYGZhy{}kube\PYGZhy{}api\PYGZhy{}content\PYGZhy{}type\PYG{o}{=}application/json \PYGZhy{}\PYGZhy{}leader\PYGZhy{}elect\PYG{o}{=}\PYG{n+nb}{false}
+	\PYGZhy{}\PYGZhy{}scheduler\PYGZhy{}name\PYG{o}{=}default
+\end{Verbatim}
