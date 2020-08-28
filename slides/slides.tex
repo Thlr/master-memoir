@@ -43,81 +43,120 @@ Richard \& Michael Mercier}
 
 \frame{\titlepage}
 
-\begin{frame}\frametitle{Table of contents}\tableofcontents
+\begin{frame}{Table of contents}
+	\tableofcontents
 \end{frame}
 
 \section{Introduction}
 
-\begin{frame}{Computer infrastructure}
-	TODO: definition of a computer infrastructure
-
-	\includegraphics[scale=0.3]{../imgs/comp-infra-michael.png}
-	\small{Placeholder (from michael thesis). TODO: my own illustration}
-\end{frame}
-
 \begin{frame}{Resource and Jobs Management System}
-	TODO: the RJMS is at the core of the hpc cluster.
+	\begin{columns}
+		\column{0.7\textwidth}
+		The RJMS is at the core of the cluster.
+		\begin{exampleblock}{Examples of RJMS}
+			\begin{itemize}
+				\item OAR
+				\item SLURM
+				\item HadoopYARN
+				\item Apache Mesos
+			\end{itemize}
+		\end{exampleblock}
 
-	def or diagram illustrating a RJMS (without much details). Show that the
-	scheduler is part of the RJMS.
-
-	Examples: OAR, Apache Mesos, hadoop YARN, SLURM
+		\column{0.3\textwidth}
+		\centering
+		\includegraphics[scale=0.6]{../imgs/RJMS.pdf}
+	\end{columns}
 \end{frame}
+
 
 \begin{frame}{Kubernetes}
-	Explain containers real quick.
+	\begin{columns}
+		\column{0.7\textwidth}
+		\begin{block}{Kubernetes in a nutshell}
+			\begin{itemize}
+				\item Open source resource manager for
+					containerized applications
+				\item About 2M lines of code
+				\item 2.8k contributors
+			\end{itemize}
+		\end{block}
 
-	Container orchestration software, description based.
+		\column{0.3\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{../imgs/kube-logo.png}
+	\end{columns}
+
+	\centering
+	\includegraphics[width=\textwidth]{../imgs/container_evolution.png}
+	\tiny{source: \url{https://kubernetes.io/docs/}}
 \end{frame}
 
-\begin{frame}{Studying computer infrastructures}
+\begin{frame}{A component of the RJMS: the scheduler}
 	\begin{columns}
 		\column{0.5\textwidth}
-		\begin{exampleblock}{Objects of studies}
+		\includegraphics[width=\textwidth]{../imgs/gantt_small.png}
+		\textbf{Scheduling} is the act of allocating tasks to resources.
+
+		\column{0.5\textwidth}
+		\begin{exampleblock}{Numerous factors}
 			\begin{itemize}
 				\item Workloads
 				\item Applications
 				\item System size
 				\item Network topology
+				\item Energy consumption
 				\item Scheduling policies
 			\end{itemize}
 		\end{exampleblock}
 
-		\column{0.5\textwidth}
-		\begin{block}{How ?}
+		Complex implementations: Kubernetes default
+		scheduler weighs \textbf{47k lines of code}.
+	\end{columns}
+\end{frame}
+
+\begin{frame}{Studying schedulers}
+	\begin{columns}
+		\column{0.4\textwidth}
+		\begin{block}{Different approaches}
 			\begin{itemize}
 				\item Analytical study
 				\item Real experiments
 				\item Emulation
-				\item Simulation
+				\item \textbf{Simulation}
 			\end{itemize}
 		\end{block}
+
+		\column{0.6\textwidth}
+		\centering
+		\includegraphics[scale=0.3]{../imgs/batsim-logo.png}
+
+		\vspace{4ex}
+
+		\includegraphics[scale=0.3]{../imgs/batsim-sequence-diag.png}
+
+		\small{Batsim, an infrastructure simulator aimed at studying RJMS.}
 	\end{columns}
-	%How to study these infra? Too many elements and interactions to
-	%consider, so no theoretical study. 
-
-	%Real experiments are too costly (both in time and resources) and not
-	%reproducible.
-
-	%Note: revoir ref sur les interactions inattendues entre scheduler et
-	%queues
-\end{frame}
-
-\begin{frame}{Batsim}
-	Aimed at studying RJMS.
-
-	Strong decoupling decision process / simulator.
-\end{frame}
-
-\begin{frame}{The scheduling problem}
-	\centering
-	\includegraphics[width=0.8\textwidth]{../imgs/gantt_small.png}
-	\textbf{Scheduling} is the act of allocating tasks to resources.
 \end{frame}
 
 \begin{frame}{Contribution}
-	TODO: Our contribution is Batkube, an interface between Batsim and
-	Kubernetes schedulers
+	\begin{columns}
+		\column{0.7\textwidth}
+		\includegraphics[width=\textwidth]{../imgs/problematic.pdf}
+
+		\vspace{1cm}
+
+		\includegraphics[width=\textwidth]{../imgs/contribution.pdf}
+
+		\column{0.38\textwidth}
+		\begin{exampleblock}{Batkube supports}
+			\begin{itemize}
+				\item Any Go scheduler
+				\item Any cluster size
+				\item Resource requests
+				\item Non parallel tasks
+			\end{itemize}
+		\end{exampleblock}
+	\end{columns}
 \end{frame}
 
 \section{Literature review}
