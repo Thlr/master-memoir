@@ -2,6 +2,9 @@
 \usepackage[backend=bibtex, style=authoryear]{biblatex} % bibliography
 \usepackage{multirow}
 \usepackage{adjustbox}
+\usepackage{tikz}
+
+\def\checkmark{\tikz\fill[scale=0.4](0,.35) -- (.25,0) -- (1,.7) -- (.25,.15) -- cycle;} 
 
 % BEAMER TEMPLATE AND THEME
 \setbeamertemplate{footline}[frame number]
@@ -160,38 +163,63 @@ Richard \& Michael Mercier}
 \end{frame}
 
 \section{Literature review}
-\begin{frame}{Domain specific simulators}
-	refs on domain specific simulators 
+
+\begin{frame}[allowframebreaks]{Infrastructure simulators}
+	TODO: what to do with this slide?
+	\begin{adjustbox}{max width=\textwidth}
+		\begin{tabular}{cccccc}
+			\hline
+			& Grid & HPC & Cloud & Peer to Peer & Volunteer Computing\\\hline
+			\textbf{SimGrid} & \checkmark & & & &\\
+			GridSim & \checkmark & & & &\\
+			LogGOPSim & & \checkmark & & &\\
+			BigSim & & \checkmark & & &\\
+			CloudSim & & & \checkmark  & &\\
+			GroudSim & \checkmark & & \checkmark & &\\
+			PeerSim & & & & \checkmark &\\
+			OverSim & & & & \checkmark &\\
+			SimBA & & & & & \checkmark \\
+			SimBOINC & & & & & \checkmark \\
+			\hline
+		\end{tabular}
+	\end{adjustbox}
+	\centering
+	\small{Domain specific simulators}
+
+	\framebreak
+	\begin{columns}
+		\column{0.6\textwidth}
+		\begin{exampleblock}{Software specific simulators}
+			\begin{itemize}
+				\item YARNSim
+				\item SLURM simulator
+			\end{itemize}
+		\end{exampleblock}
+
+		\begin{block}{Publication specific simulators}
+			``Publish and perish'' - Milian Poquet
+		\end{block}
+
+		\column{0.4\textwidth}
+		\begin{exampleblock}{Simulators for the study of RJMS}
+			\begin{itemize}
+				\item Batsim
+				\item Alea
+				\item Accasim
+			\end{itemize}
+		\end{exampleblock}
+	\end{columns}
 \end{frame}
 
-\begin{frame}{Software specific simulators}
-	YARNSim, SLURM simulator
-\end{frame}
-
-\begin{frame}{Publication specific simulators}
-	``Publish and perish'' - Milian Poquet
-\end{frame}
-
-\begin{frame}{SimGrid}
-	SimGrid: Versatile, scalable, accurate.
-
-	Cpu = a computation speed.\\
-	Storage = a seek time and a data transfert rate.\\
-	Network = a flow model, modeling bandwith sharing behaviors.
-
-	Simple models but thoroughly validated.
-\end{frame}
-
-
-\begin{frame}{Related work}
-	GridSim
-
-	Alea: modular, extensible.
-
-	Accasim: supports additional information (temperature, power
-	consuption). Very efficient in terms of simulation time and memory
-	usage.
-\end{frame}
+%\begin{frame}{SimGrid}
+%	SimGrid: Versatile, scalable, accurate.
+%
+%	Cpu = a computation speed.\\
+%	Storage = a seek time and a data transfert rate.\\
+%	Network = a flow model, modeling bandwith sharing behaviors.
+%
+%	Simple models but thoroughly validated.
+%\end{frame}
 
 \begin{frame}{Kubernetes cluster simulation}
 	k8s-cluster-simulator: open source, student project, delay jobs.
