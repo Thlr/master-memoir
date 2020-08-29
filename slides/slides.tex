@@ -84,14 +84,12 @@ Richard \& Michael Mercier}
 \begin{frame}{Kubernetes}
 	\begin{columns}
 		\column{0.7\textwidth}
-		\begin{block}{Kubernetes in a nutshell}
-			\begin{itemize}
-				\item Open source resource manager for
-					containerized applications
-				\item About 2M lines of code
-				\item 2.8k contributors
-			\end{itemize}
-		\end{block}
+		\textbf{Kubernetes in a nutshell}
+		\begin{itemize}
+			\item Open source resource manager for containerized applications
+			\item About 2M lines of code
+			\item 2.8k contributors
+		\end{itemize}
 
 		\column{0.3\textwidth}
 		\centering
@@ -110,7 +108,7 @@ Richard \& Michael Mercier}
 		\textbf{Scheduling} is the act of allocating tasks to resources.
 
 		\column{0.5\textwidth}
-		\begin{exampleblock}{Numerous factors}
+		\begin{block}{Numerous factors}
 			\begin{itemize}
 				\item Workloads
 				\item Applications
@@ -119,28 +117,28 @@ Richard \& Michael Mercier}
 				\item Energy consumption
 				\item Scheduling policies
 			\end{itemize}
-		\end{exampleblock}
+		\end{block}
 
 		Complex implementations: Kubernetes default
 		scheduler weighs \textbf{47k lines of code}.
 	\end{columns}
 \end{frame}
 
-\begin{frame}{Studying schedulers}
+\begin{frame}{Studying RJMS}
 	\begin{columns}
 		\column{0.4\textwidth}
-		\begin{block}{Different approaches}
-			\begin{itemize}
-				\item Analytical study
-				\item Real experiments
-				\item Emulation
-				\item \textbf{Simulation}
-			\end{itemize}
-		\end{block}
+		\textbf{Different approaches}
+		\begin{itemize}
+			\item Analytical study
+			\item Real experiments
+			\item Emulation
+			\item \textbf{Simulation}
+		\end{itemize}
 
 		\column{0.6\textwidth}
 		\centering
 		\includegraphics[scale=0.3]{../imgs/batsim-logo.png}
+		\includegraphics[scale=0.3]{../imgs/simgrid-logo.png}
 
 		\vspace{4ex}
 
@@ -174,55 +172,82 @@ Richard \& Michael Mercier}
 \section{Literature review}
 
 \begin{frame}{Infrastructure simulators}
-	TODO or fix
+	\begin{columns}
+		\column{0.5\textwidth}
+		\begin{adjustbox}{width=\linewidth}
+			\begin{tabular}{lccccc}
+				\hline
+				& \rotatebox[origin=c]{90}{Grid} & \rotatebox[origin=c]{90}{HPC} & \rotatebox[origin=c]{90}{Cloud} & \rotatebox[origin=c]{90}{P2P} & \rotatebox[origin=c]{90}{Volunteer}\\
+				\hline
+				\hline
+				\textbf{SimGrid} & \checkmark & & & &\\
+				GridSim & \checkmark & & & &\\
+				\hline
+				LogGOPSim & & \checkmark & & &\\
+				BigSim & & \checkmark & & &\\
+				\hline
+				CloudSim & & & \checkmark  & &\\
+				GroudSim & \checkmark & & \checkmark & &\\
+				\hline
+				PeerSim & & & & \checkmark &\\
+				OverSim & & & & \checkmark &\\
+				\hline
+				SimBA & & & & & \checkmark \\
+				SimBOINC & & & & & \checkmark \\
+				\hline
+			\end{tabular}
+		\end{adjustbox}
+		\centering
+		{\small Domain specific simulators}
+
+		\column{0.5\textwidth}
+		\centering
+		\includegraphics[scale=0.3]{../imgs/simgrid-logo.png}\\
+		\raggedright
+		\textbf{SimGrid}
+		\begin{itemize}
+			\item Framework for building simulators
+			\item Versatile, accurate and scalable
+			\item 20 years of experience
+			\item Simple analytical models
+		\end{itemize}
+	\end{columns}
 \end{frame}
 
-%\begin{frame}[allowframebreaks]{Infrastructure simulators}
-%	TODO: what to do with this slide?
-%	\begin{adjustbox}{max width=\textwidth}
-%		\begin{tabular}{cccccc}
-%			\hline
-%			& Grid & HPC & Cloud & Peer to Peer & Volunteer Computing\\\hline
-%			\textbf{SimGrid} & \checkmark & & & &\\
-%			GridSim & \checkmark & & & &\\
-%			LogGOPSim & & \checkmark & & &\\
-%			BigSim & & \checkmark & & &\\
-%			CloudSim & & & \checkmark  & &\\
-%			GroudSim & \checkmark & & \checkmark & &\\
-%			PeerSim & & & & \checkmark &\\
-%			OverSim & & & & \checkmark &\\
-%			SimBA & & & & & \checkmark \\
-%			SimBOINC & & & & & \checkmark \\
-%			\hline
-%		\end{tabular}
-%	\end{adjustbox}
-%	\centering
-%	\small{Domain specific simulators}
-%
-%	\framebreak
-%	\begin{columns}
-%		\column{0.6\textwidth}
-%		\begin{exampleblock}{Software specific simulators}
-%			\begin{itemize}
-%				\item YARNSim
-%				\item SLURM simulator
-%			\end{itemize}
-%		\end{exampleblock}
-%
-%		\begin{block}{Publication specific simulators}
-%			``Publish and perish'' - Milian Poquet
-%		\end{block}
-%
-%		\column{0.4\textwidth}
-%		\begin{exampleblock}{Simulators for the study of RJMS}
-%			\begin{itemize}
-%				\item Batsim
-%				\item Alea
-%				\item Accasim
-%			\end{itemize}
-%		\end{exampleblock}
-%	\end{columns}
-%\end{frame}
+%\begin{block}{Publication specific simulators}
+%\end{block}
+
+\begin{frame}{Simulators for the study of RJMS}
+	\begin{columns}
+		\column{0.5\textwidth}
+		\begin{block}{Often \textit{ad hoc} simulators}
+			``Publish and perish'' - Milian Poquet
+		\end{block}
+
+		\column{0.5\textwidth}
+		\begin{exampleblock}{Some active projects}
+			\begin{itemize}
+				\item YARNSim
+				\item SLURM simulator
+			\end{itemize}
+		\end{exampleblock}
+	\end{columns}
+
+	\vspace{2ex}
+	\begin{tabular}{lccc}
+		\hline
+		& \textbf{Scheduler} & \textbf{Platform} & \textbf{Job model}\\
+		\hline\hline
+		\textbf{Accasim} & Internal & Ad hoc & Static duration\\
+		\textbf{Alea} & Internal & GridSim & Static duration\\
+		\textbf{Batsim} & Custom Protocol & SimGrid & SimGrid models\\
+		\hline
+	\end{tabular}
+	\vspace{1ex}
+	\centering
+	{\small Simulation of RJMS}
+
+\end{frame}
 
 %\begin{frame}{SimGrid}
 %	SimGrid: Versatile, scalable, accurate.
@@ -235,15 +260,32 @@ Richard \& Michael Mercier}
 %\end{frame}
 
 \begin{frame}{Kubernetes cluster simulation}
-	TODO: recap table of these two schedulers
-	k8s-cluster-simulator: open source, student project, delay jobs.
-	Schedulers provided via a Go interface.
-
-	joySim: closed-source, fully fledged kubernetes cluster simulator,
-	service oriented (mock nodes).
-
-	TODO: recap kubernetes schedulers 
-
+	\centering
+	\textbf{Kubernetes simulation projects}
+	\begin{adjustbox}{width=0.8\textwidth}
+		\begin{tabular}{lll}
+			\hline
+			& \textbf{joySim} & \textbf{k8s-cluster-simulator} \\
+			\hline\hline
+			\textbf{Origin} & private (JD.com) & student project\\
+			\textbf{Availability} & closed source & open source\\
+			\textbf{Focus} & service & batch processing\\
+			\textbf{Scheduler} & any & user implementation\\
+			\textbf{Models} & mock nodes & static job durations\\
+			\hline
+		\end{tabular}
+	\end{adjustbox}
+	
+	\vspace{1ex}
+	\textbf{Notable Kubernetes schedulers}
+	\begin{itemize}
+		\item kube-batch\\
+			\smallskip
+			\includegraphics[width=13ex]{../imgs/volcano-logo.png}\hspace{1ex}
+			\includegraphics[width=6ex]{../imgs/kubeflow-logo.png}
+		\item Poseidon (Firmament)
+		\item \textbf{kube-scheduler}
+	\end{itemize}
 \end{frame}
 
 \section{Integrating Kubernetes schedulers to Batsim}
@@ -302,7 +344,13 @@ Richard \& Michael Mercier}
 \begin{frame}{Time interception}
 	\begin{columns}
 		\column{0.5\textwidth}
-		TODO: explain code source manipulation with AST
+		\begin{block}{Redirection of time calls}
+			\begin{itemize}
+				\item Specific functions are redirected
+				\item Automatic source code manipulation using AST
+				\item Ensured compatibility with the rest of the code
+			\end{itemize}
+		\end{block}
 		
 		\column{0.5\textwidth}
 		\centering
@@ -436,7 +484,7 @@ Richard \& Michael Mercier}
 
 \begin{frame}{Any questions?}
 	\centering
-	Thank you for your attention.
+	\textbf{Thank you} for your attention!\\
 
 	I am open to any questions.
 \end{frame}
