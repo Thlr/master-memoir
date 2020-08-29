@@ -4,6 +4,15 @@
 \usepackage{adjustbox}
 \usepackage{tikz}
 
+% HACKS A CUSTOM COMMANDS
+\newcommand{\backupbegin}{
+   \newcounter{framenumberappendix}
+   \setcounter{framenumberappendix}{\value{framenumber}}
+}
+\newcommand{\backupend}{
+   \addtocounter{framenumberappendix}{-\value{framenumber}}
+   \addtocounter{framenumber}{\value{framenumberappendix}} 
+}
 \def\checkmark{\tikz\fill[scale=0.4](0,.35) -- (.25,0) -- (1,.7) -- (.25,.15) -- cycle;} 
 
 % BEAMER TEMPLATE AND THEME
@@ -164,52 +173,56 @@ Richard \& Michael Mercier}
 
 \section{Literature review}
 
-\begin{frame}[allowframebreaks]{Infrastructure simulators}
-	TODO: what to do with this slide?
-	\begin{adjustbox}{max width=\textwidth}
-		\begin{tabular}{cccccc}
-			\hline
-			& Grid & HPC & Cloud & Peer to Peer & Volunteer Computing\\\hline
-			\textbf{SimGrid} & \checkmark & & & &\\
-			GridSim & \checkmark & & & &\\
-			LogGOPSim & & \checkmark & & &\\
-			BigSim & & \checkmark & & &\\
-			CloudSim & & & \checkmark  & &\\
-			GroudSim & \checkmark & & \checkmark & &\\
-			PeerSim & & & & \checkmark &\\
-			OverSim & & & & \checkmark &\\
-			SimBA & & & & & \checkmark \\
-			SimBOINC & & & & & \checkmark \\
-			\hline
-		\end{tabular}
-	\end{adjustbox}
-	\centering
-	\small{Domain specific simulators}
-
-	\framebreak
-	\begin{columns}
-		\column{0.6\textwidth}
-		\begin{exampleblock}{Software specific simulators}
-			\begin{itemize}
-				\item YARNSim
-				\item SLURM simulator
-			\end{itemize}
-		\end{exampleblock}
-
-		\begin{block}{Publication specific simulators}
-			``Publish and perish'' - Milian Poquet
-		\end{block}
-
-		\column{0.4\textwidth}
-		\begin{exampleblock}{Simulators for the study of RJMS}
-			\begin{itemize}
-				\item Batsim
-				\item Alea
-				\item Accasim
-			\end{itemize}
-		\end{exampleblock}
-	\end{columns}
+\begin{frame}{Infrastructure simulators}
+	TODO or fix
 \end{frame}
+
+%\begin{frame}[allowframebreaks]{Infrastructure simulators}
+%	TODO: what to do with this slide?
+%	\begin{adjustbox}{max width=\textwidth}
+%		\begin{tabular}{cccccc}
+%			\hline
+%			& Grid & HPC & Cloud & Peer to Peer & Volunteer Computing\\\hline
+%			\textbf{SimGrid} & \checkmark & & & &\\
+%			GridSim & \checkmark & & & &\\
+%			LogGOPSim & & \checkmark & & &\\
+%			BigSim & & \checkmark & & &\\
+%			CloudSim & & & \checkmark  & &\\
+%			GroudSim & \checkmark & & \checkmark & &\\
+%			PeerSim & & & & \checkmark &\\
+%			OverSim & & & & \checkmark &\\
+%			SimBA & & & & & \checkmark \\
+%			SimBOINC & & & & & \checkmark \\
+%			\hline
+%		\end{tabular}
+%	\end{adjustbox}
+%	\centering
+%	\small{Domain specific simulators}
+%
+%	\framebreak
+%	\begin{columns}
+%		\column{0.6\textwidth}
+%		\begin{exampleblock}{Software specific simulators}
+%			\begin{itemize}
+%				\item YARNSim
+%				\item SLURM simulator
+%			\end{itemize}
+%		\end{exampleblock}
+%
+%		\begin{block}{Publication specific simulators}
+%			``Publish and perish'' - Milian Poquet
+%		\end{block}
+%
+%		\column{0.4\textwidth}
+%		\begin{exampleblock}{Simulators for the study of RJMS}
+%			\begin{itemize}
+%				\item Batsim
+%				\item Alea
+%				\item Accasim
+%			\end{itemize}
+%		\end{exampleblock}
+%	\end{columns}
+%\end{frame}
 
 %\begin{frame}{SimGrid}
 %	SimGrid: Versatile, scalable, accurate.
@@ -222,62 +235,62 @@ Richard \& Michael Mercier}
 %\end{frame}
 
 \begin{frame}{Kubernetes cluster simulation}
+	TODO: recap table of these two schedulers
 	k8s-cluster-simulator: open source, student project, delay jobs.
 	Schedulers provided via a Go interface.
 
 	joySim: closed-source, fully fledged kubernetes cluster simulator,
 	service oriented (mock nodes).
+
+	TODO: recap kubernetes schedulers 
+
 \end{frame}
 
 \section{Integrating Kubernetes schedulers to Batsim}
 
+\begin{frame}{Different communication paradigms}
+	\begin{columns}
+		\column{0.4\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{../imgs/case1_protocol.png}
+		{\tiny source: \url{https://batsim.readthedocs.io}}
+		\begin{itemize}
+			\item Event based
+			\item Simulation time
+		\end{itemize}
+
+		\column{0.7\textwidth}
+		\includegraphics[width=\textwidth]{../imgs/kubernetes-components.pdf}
+		{\tiny source: \url{https://kubernetes.io/docs/concepts/overview/components/}}
+		\begin{itemize}
+			\item Central API
+			\item Real time
+		\end{itemize}
+	\end{columns}
+\end{frame}
+
+\begin{frame}{Time synchronization}
+	\begin{columns}
+		\column{0.55\textwidth}
+		\includegraphics[scale=0.65]{../imgs/time-sync-correct.pdf}
+
+		\small{Scenario 1: correct synchronization}
+
+		\column{0.55\textwidth}
+		\includegraphics[scale=0.6]{../imgs/time-sync-delayed.pdf}
+
+		\small{Scenario 2: delayed decision}
+	\end{columns}
+\end{frame}
+
 \begin{frame}{Technical challenges}
 	\begin{alertblock}{Challenges to tackle}
 		\begin{enumerate}
-				\uncover<1->{\item Integration with Kubernetes.}
-				\uncover<2->{\item Intercepting scheduler time.}
-				\uncover<3->{\item Time synchronization between Batsim and the scheduler.}
+			\item Integration with Kubernetes
+			\item Scheduler time interception
+			\item Time synchronization
 		\end{enumerate}
 	\end{alertblock}
-\end{frame}
-
-\begin{frame}{Batsim concepts}
-	\begin{columns}
-		\column{0.5\textwidth}
-		\centering
-		\includegraphics[width=\textwidth]{../imgs/batsim-sequence-diag.png}
-		\tiny{source \url{https://batsim.readthedocs.io}}
-
-		\column{0.5\textwidth}
-		Batsim events and protocol.
-
-		User defined workloads.
-
-		(insert json examples?)
-\end{columns}
-\end{frame}
-
-\begin{frame}{Kubernetes concepts}
-	\centering
-	\only<1>{\includegraphics[width=\textwidth]{../imgs/components-of-kubernetes.png}}
-	\only<2>{\includegraphics[width=\textwidth]{../imgs/components-of-kubernetes-2.png}}
-	\tiny{source: \url{https://kubernetes.io/docs/concepts/overview/components/}}\\
-	\small{Kubernetes components.}
-\end{frame}
-
-\begin{frame}{Different paradigms}
-	Batsim: event based, simulation time.
-
-	Kubernetes scheduler: asynchronous calls to the API, machine time.
-
-	The goal is to make the scheduler event based and relying on simulation
-	time for Batsim, and make Batsim a kube-api-server to the scheduler.
-\end{frame}
-
-\begin{frame}{Batkube integration with Kubernetes}
-	\centering
-	\includegraphics[width=0.8\textwidth]{../imgs/custom-api.pdf}\\
-	\small{Reimplementation of a custom API.}
 \end{frame}
 
 \begin{frame}{Architeture of Batkube}
@@ -286,62 +299,31 @@ Richard \& Michael Mercier}
 	\small{Global architecture of Batkube.}
 \end{frame}
 
-%\begin{frame}{Similar resources}
-%	\begin{columns}
-%		\column{0.5\textwidth}
-%		\centering
-%		\includegraphics[width=\textwidth]{../imgs/node-overview.png}
-%		\tiny{source: \url{https://kubernetes.io/docs/tutorials/kubernetes-basics/explore/explore-intro/}}
-%
-%		\column{0.5\textwidth}
-%		\begin{block}{Translation between Kubernetes and Batsim}
-%			\begin{itemize}
-%				\item A Pod = a job.
-%				\item A Node = a compute resource.
-%			\end{itemize}
-%		\end{block}
-%	\end{columns}
-%\end{frame}
-
 \begin{frame}{Time interception}
-	\centering
-	\includegraphics[width=0.6\textwidth]{../imgs/synchro-go-sources.pdf}\\
-	\small{Schedulers are patched to redirect their time.}
+	\begin{columns}
+		\column{0.5\textwidth}
+		TODO: explain code source manipulation with AST
+		
+		\column{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{../imgs/synchro-go-sources.pdf}\\
+		\small{Schedulers are patched to redirect their time.}
+	\end{columns}
 \end{frame}
 
-%\begin{frame}{batsky-go}
-%	\begin{columns}
-%		\column{0.5\textwidth}
-%		\centering
-%		\includegraphics[scale=0.38]{../imgs/requester-broker.pdf}
-%		
-%		\column{0.5\textwidth}
-%		Exchanges between the scheduler, batsky-go (``time'') and Batsim
-%	\end{columns}
-%\end{frame}
-
-\begin{frame}[allowframebreaks]{Time synchronization}
-	TODO: explain CML
-	\framebreak
-
+\begin{frame}{Time synchronization}
 	\centering
-	\includegraphics[width=0.87\textwidth]{../imgs/lignes_de_temps_simple.pdf}\\
+	\includegraphics[width=\textwidth]{../imgs/lignes_de_temps_simple.pdf}\\
 	\small{Time synchronization between Batsim and the scheduler}
 \end{frame}
 
 \begin{frame}[allowframebreaks]{Parameters of the synchronization}
 		\centering
-		\includegraphics[width=0.87\textwidth]{../imgs/timeout.pdf}\\
+		\includegraphics[width=\textwidth]{../imgs/timeout.pdf}\\
 		Timeout value
 
-		\includegraphics[width=0.8\textwidth]{../imgs/max-timestep.pdf}\\
+		\includegraphics[width=0.9\textwidth]{../imgs/max-timestep.pdf}\\
 		Simulation time step $\in$ [\texttt{base-simulation-timestep}, \texttt{max-simulation-timestep}]
-\end{frame}
-
-\begin{frame}{Time synchronization breakdown}
-	\centering
-	\includegraphics[width=0.87\textwidth]{../imgs/lignes_de_temps.pdf}\\
-	\small{Time synchronization between Batsim and the scheduler}
 \end{frame}
 
 \section{Study of the simulator}
@@ -445,9 +427,60 @@ Richard \& Michael Mercier}
 	- more complete api: support for more schedulers but also tools (monitoring tools)
 \end{frame}
 
+\section*{}
+\backupbegin
 \begin{frame}[allowframebreaks]
         \frametitle{References}
 	\printbibliography
 \end{frame}
 
+\begin{frame}{Any questions?}
+	\centering
+	Thank you for your attention.
+
+	I am open to any questions.
+\end{frame}
+
+\appendix
+\begin{frame}{Batkube integration with Kubernetes}
+	\centering
+	\includegraphics[width=0.8\textwidth]{../imgs/custom-api.pdf}\\
+	\small{Reimplementation of a custom API.}
+\end{frame}
+
+\begin{frame}{Time interception}
+	\centering
+	\includegraphics[width=0.6\textwidth]{../imgs/synchro-go-sources.pdf}\\
+	\small{Schedulers are patched to redirect their time.}
+\end{frame}
+
+\begin{frame}{batsky-go}
+	\begin{columns}
+		\column{0.5\textwidth}
+		\centering
+		\includegraphics[scale=0.38]{../imgs/requester-broker.pdf}
+		
+		\column{0.5\textwidth}
+		Exchanges between the scheduler, batsky-go (``time'') and Batsim
+	\end{columns}
+\end{frame}
+
+\begin{frame}{Similar resources}
+	\begin{columns}
+		\column{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{../imgs/node-overview.png}
+		\tiny{source: \url{https://kubernetes.io/docs/tutorials/kubernetes-basics/explore/explore-intro/}}
+
+		\column{0.5\textwidth}
+		\begin{block}{Translation between Kubernetes and Batsim}
+			\begin{itemize}
+				\item A Pod = a job.
+				\item A Node = a compute resource.
+			\end{itemize}
+		\end{block}
+	\end{columns}
+\end{frame}
+
+\backupend
 \end{document}
