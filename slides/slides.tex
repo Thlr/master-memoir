@@ -3,6 +3,7 @@
 \usepackage{multirow}
 \usepackage{adjustbox}
 \usepackage{tikz}
+\usepackage{multirow}
 
 % HACKS A CUSTOM COMMANDS
 \newcommand{\backupbegin}{
@@ -272,6 +273,8 @@ Richard \& Michael Mercier}
 			\textbf{Focus} & service & batch processing\\
 			\textbf{Scheduler} & any & user implementation\\
 			\textbf{Models} & mock nodes & static job durations\\
+			\multirow[t]{2}{*}{\textbf{Capabilities}} & fully fledged simulator & time dilation\\ 
+			& monitoring tools & raw metrics\\
 			\hline
 		\end{tabular}
 	\end{adjustbox}
@@ -371,98 +374,140 @@ Richard \& Michael Mercier}
 		Timeout value
 
 		\includegraphics[width=0.9\textwidth]{../imgs/max-timestep.pdf}\\
+		\raggedright
+		\small
 		Simulation time step $\in$ [\texttt{base-simulation-timestep}, \texttt{max-simulation-timestep}]
+
+		Multiplying factor: \texttt{backoff-multiplier} (default = 2)
 \end{frame}
 
 \section{Study of the simulator}
 
-\begin{frame}{Experimental design}
-	TODO: Scheduler used, platforms and workloads tested, what experiments (parameters, metrics studied, repetitions)
-	%\centering
-	%\begin{tabular}{|c|c|c|c|c|c|}
-	%	\hline\\
-	%	name & number of jobs & jobs type & sub time & resource requests & platform
-	%	\hline\\
-	%	burst & 200 & delay (170s) & at time zero & 1 cpu & 16x1\\
-	%	spaced & 200 & delay (170s) & every ten seconds & 1 cpu & 16x1\\
-	%\end{tabular}
+\begin{frame}{Study of the simulator parameters}
+	\textbf{Scheduler} kube-scheduler
+
+	\textbf{Workloads}
+	\begin{itemize}
+		\item \textit{burst}: 200x170s, 1 cpu, at time zero
+		\item \textit{spaced}: 200x170s, 1 cpu, every ten seconds
+		\item \textit{realistic}: 49 jobs, between 0 and 6 cpu, between 0 and 1 hour duration, extracted from the KIT ForHLR II system.
+	\end{itemize}
+
+	\textbf{Platforms}
+	\begin{itemize}
+		\item \textit{burst} and \textit{spaced}: 16 nodes x 1 cpu
+		\item \textit{realistic}: 1 node x 6 cpu
+	\end{itemize}
+
+	\textbf{Metrics}
+	\begin{itemize}
+		\item Makespan = simulated length of the simulation
+		\item Simulation duration = real execution time
+	\end{itemize}
 \end{frame}
 
-\begin{frame}[allowframebreaks]{Timeout}
-	\centering
+\begin{frame}{Timeout}
 	\includegraphics[width=\textwidth]{../imgs/timeout_burst_spaced.png}
-	\includegraphics[width=\textwidth]{../imgs/timeout_realistic.png}
+	{\small \texttt{max-simulation-timestep = 20s}\\
+	\texttt{base-simulation-timestep = 100ms}\\
+	\texttt{backoff-multiplier = 2}}
+
+	$\rightarrow$ Critical value in the \textbf{accuracy / scalability} tradeoff
+
+	$\rightarrow$ An optimal value can be measured
 \end{frame}
 
-\begin{frame}[allowframebreaks]{Maximum simulation timestep}
-	\centering
+\begin{frame}{Maximum simulation timestep}
 	\includegraphics[width=\textwidth]{../imgs/max-timestep_burst_sp.png}
-	\includegraphics[width=\textwidth]{../imgs/max-timestep_realistic.png}
+	{\small \texttt{timeout-value = 50ms}\\
+	\texttt{base-simulation-timestep = 100ms}\\
+	\texttt{backoff-multiplier = 2}}
+
+	$\rightarrow$ Experiments too simple to draw any conclusion (only decision = schedule a job)
 \end{frame}
 
 \begin{frame}{Experimentation on a real cluster}
-	\centering
-	\includegraphics[width=0.8\textwidth]{../imgs/expe-protocole-v2.pdf}
-\end{frame}
+	\begin{columns}
+		\column{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{../imgs/expe-protocole-v2-simple.pdf}
+		{\small Workloads are run 10 times each (except \textit{realistic})}
+		\column{0.5\textwidth}
+		\begin{adjustbox}{max width=\textwidth}
+			\begin{tabular}{|c|c|c|c|c|}
+				\hline
 
-\begin{frame}{Deviation with reality}
-	\centering
-	\begin{adjustbox}{max width=\textwidth}
-		\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
-			\hline
+				\multirow{3}{*}{workload} & \multicolumn{4}{c|}{\textbf{makespan}}\\
 
-			\multirow{3}{*}{workload} & \multicolumn{4}{c|}{\textbf{makespan}} & \multicolumn{4}{c|}{\textbf{mean waiting time}}\\
+				\cline{2-5}
 
-			\cline{2-9}
+				& \multicolumn{2}{c|}{emulated} &
+				\multicolumn{2}{c|}{simulated} \\
 
-			& \multicolumn{2}{c|}{emulated} &
-			\multicolumn{2}{c|}{simulated} & \multicolumn{2}{c|}{emulated}
-			& \multicolumn{2}{c|}{simulated} \\
+				\cline{2-5}
 
-			\cline{2-9}
+				& $\mu$ & $\sigma$ & $\mu$ & $\sigma$ \\
 
-			& $\mu$ & $\sigma$ & $\mu$ & $\sigma$ & $\mu$ & $\sigma$ & $\mu$ & $\sigma$ \\
+				\hline
 
-			\hline
+				burst & 2467 & 28.3 & 2215 (-252) & 0.508 \\
+				spaced & 2468 & 5.14 & 2257 (-211) & 16.9 \\
+				realistic & 32556 & - & 32555 (-1) & 1.30 \\
+				\hline
+			\end{tabular}
+		\end{adjustbox}
 
-			burst & 2467 & 28.3 & 2215 (-252) & 0.508 & 1077 & 10.6 & 970 (-107) & 12.6 \\
-			spaced & 2468 & 5.14 & 2257 (-211) & 16.9 & 146 & 1.67 & 48.1 (-97.9) & 9.44 \\
-			realistic & 32556 & - & 32555 (-1) & 1.30 & 2884 & - & 2020 (-864) & 950 \\
-			\hline
-		\end{tabular}
-	\end{adjustbox}
-\end{frame}
+		\vspace{1ex}
+		\begin{adjustbox}{max width=\textwidth}
+			\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+				\hline
 
-\begin{frame}{Conclusion}
-	Deviation with reality: can be fixed with some work on the api. Need
-	experiments to measur and quantify this deviation.
+				\multirow{3}{*}{workload} & \multicolumn{4}{c|}{\textbf{mean waiting time}}\\
 
-	max timestep: studying max timestep alone is not enough, need to study
-	it with backoff multiplier.
+				\cline{2-5}
 
-	base time step: need an experiment on it. Too much importance was
-	credited to max timestep, the base timestep might have importance.
+				& \multicolumn{2}{c|}{emulated} &
+				\multicolumn{2}{c|}{simulated} \\
+
+				\cline{2-5}
+
+				& $\mu$ & $\sigma$ & $\mu$ & $\sigma$ \\
+
+				\hline
+
+				burst & 1077 & 10.6 & 970 (-107) & 12.6 \\
+				spaced & 146 & 1.67 & 48.1 (-97.9) & 9.44 \\
+				realistic & 2884 & - & 2020 (-864) & 950 \\
+				\hline
+			\end{tabular}
+		\end{adjustbox}
+
+		\textbf{Causes to this deviation}
+		\begin{itemize}
+			\item Scheduler over allocating when simulated
+			\item Incomplete simulation models
+		\end{itemize}
+	\end{columns}
 \end{frame}
 
 \section{Discussion and future work}
 \begin{frame}{Capabilities and limitations of Batkube}
-	WIP
 	\begin{columns}
 		\column{0.5\textwidth}
 		\begin{block}{Capabilities}
 			\begin{itemize}
-				\item Delay jobs
+				\item Can patch \textbf{any kubernetes scheduler } written in Go \textbf{without any modification}
+				\item Static duration model for jobs
 				\item Cpu and memory requests
-				\item Can patch any kubernetes scheduler written in Go
-				\item The api only supports the default scheduler
+				\item Supports the default scheduler
 			\end{itemize}
 		\end{block}
 
 		\column{0.5\textwidth}
 		\begin{alertblock}{Limitations}
 			\begin{itemize}
-				\item Memory hungry (in fact, the scheduler is memory hungry)
-				\item Some problems with the scheduler
+				\item Incomplete models
+				\item Some misbehavior of the scheduler
 				\item Not scalable
 			\end{itemize}
 		\end{alertblock}
@@ -470,9 +515,13 @@ Richard \& Michael Mercier}
 \end{frame}
 
 \begin{frame}{Perspectives for future work}
-	- parallel jobs\\
-	- storage\\
-	- more complete api: support for more schedulers but also tools (monitoring tools)
+	\begin{itemize}
+		\item More complete models for Kubernetes resources
+		\item Support for IO intensive jobs
+		\item Support for parallel jobs
+		\item Support for other schedulers
+		\item More extensive experiments to work on scalability
+	\end{itemize}
 \end{frame}
 
 \section*{}
@@ -528,6 +577,10 @@ Richard \& Michael Mercier}
 			\end{itemize}
 		\end{block}
 	\end{columns}
+\end{frame}
+
+\begin{frame}
+	TODO: results for realistic workload
 \end{frame}
 
 \backupend
