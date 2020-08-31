@@ -149,7 +149,7 @@ Richard \& Michael Mercier}
 	\end{columns}
 \end{frame}
 
-\begin{frame}{Contribution}
+\begin{frame}{Contribution: Batkube}
 	\begin{columns}
 		\column{0.7\textwidth}
 		\includegraphics[width=\textwidth]{../imgs/problematic.pdf}
@@ -308,13 +308,13 @@ Richard \& Michael Mercier}
 		\includegraphics[width=\textwidth]{../imgs/kubernetes-components.pdf}
 		{\tiny source: \url{https://kubernetes.io/docs/concepts/overview/components/}}
 		\begin{itemize}
-			\item Central API
+			\item API requests based on timers
 			\item Real time
 		\end{itemize}
 	\end{columns}
 \end{frame}
 
-\begin{frame}{Time synchronization}
+\begin{frame}{Time synchronization problem}
 	\begin{columns}
 		\column{0.55\textwidth}
 		\includegraphics[scale=0.65]{../imgs/time-sync-correct.pdf}
@@ -406,6 +406,20 @@ Richard \& Michael Mercier}
 	\end{itemize}
 \end{frame}
 
+\begin{frame}{Timeout: Gantt charts}
+	Workload: \textit{spaced}
+	\begin{columns}
+		\column{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{../imgs/timeout_5ms_gantt.png}
+		\small{Timeout value = 5ms}
+		\column{0.5\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{../imgs/timeout_50ms_gantt.png}
+		\small{Timeout value = 50ms}
+	\end{columns}
+\end{frame}
+
 \begin{frame}{Timeout}
 	\includegraphics[width=\textwidth]{../imgs/timeout_burst_spaced.png}
 	{\small \texttt{max-simulation-timestep = 20s}\\
@@ -414,7 +428,7 @@ Richard \& Michael Mercier}
 
 	$\rightarrow$ Critical value in the \textbf{accuracy / scalability} tradeoff
 
-	$\rightarrow$ An optimal value can be measured
+	$\rightarrow$ An effective value can be measured
 \end{frame}
 
 \begin{frame}{Maximum simulation timestep}
@@ -458,29 +472,29 @@ Richard \& Michael Mercier}
 		\end{adjustbox}
 
 		\vspace{1ex}
-		\begin{adjustbox}{max width=\textwidth}
-			\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
-				\hline
+		%\begin{adjustbox}{max width=\textwidth}
+		%	\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+		%		\hline
 
-				\multirow{3}{*}{workload} & \multicolumn{4}{c|}{\textbf{mean waiting time}}\\
+		%		\multirow{3}{*}{workload} & \multicolumn{4}{c|}{\textbf{mean waiting time}}\\
 
-				\cline{2-5}
+		%		\cline{2-5}
 
-				& \multicolumn{2}{c|}{emulated} &
-				\multicolumn{2}{c|}{simulated} \\
+		%		& \multicolumn{2}{c|}{emulated} &
+		%		\multicolumn{2}{c|}{simulated} \\
 
-				\cline{2-5}
+		%		\cline{2-5}
 
-				& $\mu$ & $\sigma$ & $\mu$ & $\sigma$ \\
+		%		& $\mu$ & $\sigma$ & $\mu$ & $\sigma$ \\
 
-				\hline
+		%		\hline
 
-				burst & 1077 & 10.6 & 970 (-107) & 12.6 \\
-				spaced & 146 & 1.67 & 48.1 (-97.9) & 9.44 \\
-				realistic & 2884 & - & 2020 (-864) & 950 \\
-				\hline
-			\end{tabular}
-		\end{adjustbox}
+		%		burst & 1077 & 10.6 & 970 (-107) & 12.6 \\
+		%		spaced & 146 & 1.67 & 48.1 (-97.9) & 9.44 \\
+		%		realistic & 2884 & - & 2020 (-864) & 950 \\
+		%		\hline
+		%	\end{tabular}
+		%\end{adjustbox}
 
 		\textbf{Causes to this deviation}
 		\begin{itemize}
@@ -497,21 +511,26 @@ Richard \& Michael Mercier}
 		\begin{block}{Capabilities}
 			\begin{itemize}
 				\item Can patch \textbf{any kubernetes scheduler } written in Go \textbf{without any modification}
-				\item Static duration model for jobs
-				\item Cpu and memory requests
-				\item Supports the default scheduler
 			\end{itemize}
 		\end{block}
 
 		\column{0.5\textwidth}
 		\begin{alertblock}{Limitations}
 			\begin{itemize}
-				\item Incomplete models
-				\item Some misbehavior of the scheduler
+				\item Potential misbehavior of the scheduler
+					due to time dilation
 				\item Not scalable
 			\end{itemize}
 		\end{alertblock}
 	\end{columns}
+
+	\begin{exampleblock}{Limitations of the study}
+		\begin{itemize}
+			\item Incomplete models
+			\item Static duration model for jobs
+			\item Supports the default scheduler only
+		\end{itemize}
+	\end{exampleblock}
 \end{frame}
 
 \begin{frame}{Perspectives for future work}
@@ -526,10 +545,6 @@ Richard \& Michael Mercier}
 
 \section*{}
 \backupbegin
-\begin{frame}[allowframebreaks]
-        \frametitle{References}
-	\printbibliography
-\end{frame}
 
 \begin{frame}{Any questions?}
 	\centering
@@ -543,12 +558,6 @@ Richard \& Michael Mercier}
 	\centering
 	\includegraphics[width=0.8\textwidth]{../imgs/custom-api.pdf}\\
 	\small{Reimplementation of a custom API.}
-\end{frame}
-
-\begin{frame}{Time interception}
-	\centering
-	\includegraphics[width=0.6\textwidth]{../imgs/synchro-go-sources.pdf}\\
-	\small{Schedulers are patched to redirect their time.}
 \end{frame}
 
 \begin{frame}{batsky-go}
@@ -579,8 +588,10 @@ Richard \& Michael Mercier}
 	\end{columns}
 \end{frame}
 
-\begin{frame}
-	TODO: results for realistic workload
+\begin{frame}{Realistic workload results}
+	\centering
+	\includegraphics[width=0.8\textwidth]{../imgs/timeout_realistic.png}
+	\includegraphics[width=0.8\textwidth]{../imgs/max-timestep_realistic.png}
 \end{frame}
 
 \backupend
